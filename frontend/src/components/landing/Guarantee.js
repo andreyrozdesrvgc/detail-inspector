@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { Dialog, DialogContent } from "@/components/ui/dialog";
+import { Dialog, DialogContent, DialogTitle, DialogDescription } from "@/components/ui/dialog";
 import { ChevronLeft, ChevronRight, X, ZoomIn, Maximize2, FileText, ShieldCheck, ClipboardList } from "lucide-react";
 import { DOCS } from "@/lib/data";
 
@@ -160,6 +160,8 @@ export default function Guarantee() {
 
       <Dialog open={open !== null} onOpenChange={(o) => !o && setOpen(null)}>
         <DialogContent className="bg-[#050505] border border-white/10 text-white max-w-4xl p-0 rounded-sm overflow-hidden">
+          <DialogTitle className="sr-only">{open !== null ? DOCS[open].title : "Документ"}</DialogTitle>
+          <DialogDescription className="sr-only">Образец официального документа Detail Inspector.</DialogDescription>
           <AnimatePresence mode="wait">
             {open !== null && (
               <motion.div

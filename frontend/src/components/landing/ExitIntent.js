@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { Dialog, DialogContent } from "@/components/ui/dialog";
+import { Dialog, DialogContent, DialogTitle, DialogDescription } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { submitLead } from "@/lib/api";
 import { toast } from "sonner";
@@ -48,6 +48,8 @@ export default function ExitIntent() {
         data-testid="exit-intent-dialog"
         className="bg-[#0a0a0a] border border-white/10 text-white max-w-md p-0 rounded-sm overflow-hidden"
       >
+        <DialogTitle className="sr-only">Уходите? Оставьте телефон</DialogTitle>
+        <DialogDescription className="sr-only">Получите персональный расчёт стоимости защиты BMW.</DialogDescription>
         <button
           onClick={() => setOpen(false)}
           data-testid="exit-intent-close"

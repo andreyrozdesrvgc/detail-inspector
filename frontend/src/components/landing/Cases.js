@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { Dialog, DialogContent } from "@/components/ui/dialog";
+import { Dialog, DialogContent, DialogTitle, DialogDescription } from "@/components/ui/dialog";
 import { useLead } from "@/lib/leadContext";
 import { CASES } from "@/lib/data";
 import { X } from "lucide-react";
@@ -71,6 +71,8 @@ export default function Cases() {
 
       <Dialog open={openIdx !== null} onOpenChange={(o) => !o && setOpenIdx(null)}>
         <DialogContent className="bg-[#0a0a0a] border border-white/10 text-white max-w-4xl p-0 rounded-sm overflow-hidden">
+          <DialogTitle className="sr-only">{active ? active.model : "Кейс"}</DialogTitle>
+          <DialogDescription className="sr-only">Детальная информация по кейсу оклейки BMW.</DialogDescription>
           <button
             onClick={() => setOpenIdx(null)}
             className="absolute right-4 top-4 z-20 text-white/80 hover:text-white"

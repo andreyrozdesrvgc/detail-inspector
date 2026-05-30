@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { Dialog, DialogContent } from "@/components/ui/dialog";
+import { Dialog, DialogContent, DialogTitle, DialogDescription } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { useLead } from "@/lib/leadContext";
 import { submitLead } from "@/lib/api";
@@ -53,6 +53,8 @@ export default function LeadDialog() {
         data-testid="lead-dialog"
         className="bg-[#0a0a0a] border border-white/10 text-white max-w-lg p-0 rounded-sm overflow-hidden"
       >
+        <DialogTitle className="sr-only">Получите расчёт защиты BMW</DialogTitle>
+        <DialogDescription className="sr-only">Форма заявки на персональный расчёт стоимости оклейки BMW.</DialogDescription>
         <button
           onClick={closeLead}
           data-testid="lead-dialog-close"
