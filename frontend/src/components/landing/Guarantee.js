@@ -157,7 +157,7 @@ export default function Guarantee() {
               className="mt-10 flex flex-col items-center text-center"
             >
               <div className="text-[11px] uppercase tracking-[0.22em] text-[#9a9a9a] mb-4">
-                Сметы прозрачны до рубля
+                Все документы — ваши. Сметы прозрачны до рубля
               </div>
               <button
                 onClick={openLeadFromGuarantee}
@@ -179,30 +179,21 @@ export default function Guarantee() {
               ))}
             </div>
           </div>
-        </div>
 
-        {/* CTA below documents — centered */}
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          transition={{ duration: 0.7, ease: [0.16, 1, 0.3, 1] }}
-          className="mt-16 md:mt-24 flex flex-col items-center text-center"
-        >
-          <div className="text-[11px] uppercase tracking-[0.22em] text-[#9a9a9a] mb-5">
-            Все документы — ваши. Сметы прозрачны до рубля
+          {/* Mobile-only CTA */}
+          <div className="lg:hidden mt-8 flex flex-col items-center text-center">
+            <div className="text-[11px] uppercase tracking-[0.22em] text-[#9a9a9a] mb-4 leading-relaxed">
+              Все документы — ваши. Сметы прозрачны до рубля
+            </div>
+            <button
+              onClick={openLeadFromGuarantee}
+              data-testid="guarantee-cta-mobile"
+              className="btn-gold w-full px-8 py-4 uppercase tracking-[0.2em] text-[11px] font-semibold rounded-sm"
+            >
+              <span>Рассчитать стоимость</span>
+            </button>
           </div>
-          <button
-            onClick={() => openLeadFromGuarantee()}
-            data-testid="guarantee-cta"
-            className="btn-gold px-10 py-4 uppercase tracking-[0.2em] text-[11px] font-semibold rounded-sm"
-          >
-            <span>Рассчитать стоимость</span>
-          </button>
-          <p className="mt-4 text-xs text-[#9a9a9a]/80 max-w-md">
-            Бесплатный осмотр и документальный аудит ЛКП с фиксацией состояния
-          </p>
-        </motion.div>
+        </div>
       </div>
 
       <Dialog open={open !== null} onOpenChange={(o) => !o && setOpen(null)}>

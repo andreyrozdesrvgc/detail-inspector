@@ -18,7 +18,7 @@ export default function Process() {
         >
           <div className="eyebrow mb-6">Процесс работы</div>
           <h2 className="font-display text-[34px] md:text-[56px] leading-[1.02] tracking-[-0.03em] mb-6">
-            Инженерный протокол из 6 этапов:<br />
+            <span className="gold-text">Инженерный протокол</span> из 6 этапов:<br />
             <span className="text-[#9a9a9a]">от аудита под светом до калибровки радаров</span>
           </h2>
           <p className="text-[#9a9a9a] text-base md:text-lg max-w-2xl leading-relaxed">
@@ -34,9 +34,9 @@ export default function Process() {
             {PROCESS_STEPS.map((s, i) => (
               <motion.div
                 key={s.n}
-                initial={{ opacity: 0.2, y: 40 }}
+                initial={{ opacity: 0.08, y: 40 }}
                 whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: false, amount: 0.55 }}
+                viewport={{ once: false, amount: 0.6 }}
                 transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
                 className={`relative pl-12 md:pl-0 md:grid md:grid-cols-2 md:gap-16 items-start ${
                   i % 2 ? "md:[&>*:first-child]:order-2" : ""
