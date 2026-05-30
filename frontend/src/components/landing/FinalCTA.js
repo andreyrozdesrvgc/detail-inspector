@@ -41,7 +41,7 @@ export default function FinalCTA() {
           viewport={{ once: true }}
           transition={{ duration: 0.7, ease: [0.16, 1, 0.3, 1] }}
         >
-          <div className="overline mb-5">Запись на осмотр</div>
+          <div className="eyebrow mb-5">Запись на осмотр</div>
           <h2 className="font-display text-[36px] md:text-[64px] leading-[1.0] tracking-[-0.04em] mb-6">
             Готовы защитить ваш&nbsp;<span className="gold-text">BMW</span><br />
             <span className="text-[#9a9a9a]">по высшему стандарту?</span>
@@ -70,7 +70,7 @@ export default function FinalCTA() {
             </div>
           ) : (
             <>
-              <div className="overline mb-6">Бесплатный осмотр</div>
+              <div className="eyebrow mb-6">Бесплатный осмотр</div>
               <div className="space-y-3">
                 <Input
                   data-testid="final-cta-name"

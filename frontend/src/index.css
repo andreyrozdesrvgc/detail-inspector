@@ -46,8 +46,8 @@ body {
 .font-body { font-family: 'Inter', 'Satoshi', sans-serif; }
 .font-mono { font-family: 'JetBrains Mono', ui-monospace, monospace; letter-spacing: 0.02em; }
 
-/* Overline — clean small caps label, no decoration lines */
-.overline {
+/* Eyebrow — clean small caps label */
+.eyebrow {
     font-family: 'Inter', sans-serif;
     font-weight: 600;
     letter-spacing: 0.24em;

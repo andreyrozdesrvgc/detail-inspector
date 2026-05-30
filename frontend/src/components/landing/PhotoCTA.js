@@ -26,7 +26,7 @@ export default function PhotoCTA() {
         transition={{ duration: 0.7, ease: [0.16, 1, 0.3, 1] }}
         className="relative max-w-[1100px] mx-auto px-6 md:px-10 text-center"
       >
-        <div className="overline mb-6 mx-auto" style={{ display: "inline-block" }}>Быстрый расчёт</div>
+        <div className="eyebrow mb-6 mx-auto" style={{ display: "inline-block" }}>Быстрый расчёт</div>
         <h2 className="font-display text-[34px] md:text-[64px] leading-[1.0] tracking-[-0.04em] mb-8">
           Отправьте фото автомобиля<br />
           <span className="text-[#9a9a9a]">и получите расчёт за <span className="gold-text">15 минут</span></span>

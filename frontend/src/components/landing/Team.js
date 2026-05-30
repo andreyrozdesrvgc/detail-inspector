@@ -21,7 +21,7 @@ export default function Team() {
           transition={{ duration: 0.7, ease: [0.16, 1, 0.3, 1] }}
           className="max-w-4xl mb-16"
         >
-          <div className="overline mb-5">Команда</div>
+          <div className="eyebrow mb-5">Команда</div>
           <h2 className="font-display text-[34px] md:text-[56px] leading-[1.02] tracking-[-0.03em]">
             Ваши <span className="gold-text">BMW</span> в руках<br /><span className="text-[#9a9a9a]">лучших специалистов Москвы</span>
           </h2>
@@ -69,11 +69,11 @@ export default function Team() {
             </div>
 
             <div className="p-8 md:p-12 flex flex-col">
-              <div className="overline mb-4">{member.role}</div>
+              <div className="eyebrow mb-4">{member.role}</div>
               <h3 className="font-display text-3xl md:text-4xl mb-6 leading-tight">{member.name}</h3>
 
               <div className="border-t border-white/10 pt-6 mb-8">
-                <div className="overline mb-3">Главная задача</div>
+                <div className="eyebrow mb-3">Главная задача</div>
                 <p className="text-white/85 text-base leading-relaxed">{member.task}</p>
               </div>
 

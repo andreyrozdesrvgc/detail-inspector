@@ -54,13 +54,13 @@ export default function ExitIntent() {
         <AnimatePresence mode="wait">
           {done ? (
             <motion.div key="done" initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="p-10 text-center">
-              <div className="overline mb-3">Готово</div>
+              <div className="eyebrow mb-3">Готово</div>
               <h3 className="font-display text-2xl mb-3">Расчёт отправим в течение 15 минут</h3>
               <p className="text-sm text-[#9a9a9a]">Подарок в силе — бесплатная оклейка зоны погрузки.</p>
             </motion.div>
           ) : (
             <motion.div key="form" initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="p-10">
-              <div className="overline mb-4">Уходите?</div>
+              <div className="eyebrow mb-4">Уходите?</div>
               <h3 className="font-display text-2xl md:text-3xl mb-3 leading-tight">
                 Отправьте фото автомобиля<br /><span className="text-[#9a9a9a]">и получите расчёт</span>
               </h3>

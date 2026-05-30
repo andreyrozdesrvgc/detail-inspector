@@ -18,7 +18,7 @@ export default function FAQSection() {
           viewport={{ once: true }}
           transition={{ duration: 0.7, ease: [0.16, 1, 0.3, 1] }}
         >
-          <div className="overline mb-6">FAQ</div>
+          <div className="eyebrow mb-6">FAQ</div>
           <h2 className="font-display text-[34px] md:text-[52px] leading-[1.02] tracking-[-0.03em]">
             Частые вопросы<br /><span className="text-[#9a9a9a]">по оклейке BMW</span>
           </h2>

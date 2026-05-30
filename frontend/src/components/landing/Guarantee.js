@@ -65,7 +65,7 @@ export default function Guarantee() {
               transition={{ duration: 0.7, ease: [0.16, 1, 0.3, 1] }}
               className="mb-12"
             >
-              <div className="overline mb-5">Документальная гарантия</div>
+              <div className="eyebrow mb-5">Документальная гарантия</div>
               <h2 className="font-display text-[32px] md:text-[52px] leading-[1.02] tracking-[-0.03em] mb-6">
                 Каждый автомобиль <span className="gold-text">сопровождается</span><br />
                 <span className="text-[#9a9a9a]">официальным пакетом документов</span>
@@ -93,7 +93,7 @@ export default function Guarantee() {
                       <Icon className="size-4 text-white" strokeWidth={1.5} />
                     </div>
                     <div className="flex-1">
-                      <div className="overline mb-1.5">Карточка {i + 1}</div>
+                      <div className="eyebrow mb-1.5">Карточка {i + 1}</div>
                       <h3 className="font-display text-lg md:text-xl mb-2 leading-tight">{d.title}</h3>
                       <p className="text-sm text-[#9a9a9a] leading-relaxed">{d.desc}</p>
                     </div>
@@ -245,7 +245,7 @@ export default function Guarantee() {
                   </div>
                 </div>
                 <div className="p-8 md:p-10 relative">
-                  <div className="overline mb-4">Документ {open + 1} из {DOCS.length}</div>
+                  <div className="eyebrow mb-4">Документ {open + 1} из {DOCS.length}</div>
                   <h3 className="font-display text-2xl md:text-3xl mb-5 leading-tight">{DOCS[open].title}</h3>
                   <p className="text-sm text-[#9a9a9a] leading-relaxed mb-6">{DOCS[open].desc}</p>
                   <div className="border-t border-white/10 pt-5 space-y-2 mb-8">

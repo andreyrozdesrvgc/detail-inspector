@@ -18,7 +18,7 @@ export default function SeoText() {
           transition={{ duration: 0.7, ease: [0.16, 1, 0.3, 1] }}
           className="mb-10"
         >
-          <div className="overline mb-6">Защита BMW в Москве</div>
+          <div className="eyebrow mb-6">Защита BMW в Москве</div>
           <h2 className="font-display text-[28px] md:text-[42px] leading-[1.05] tracking-[-0.03em]">
             Полиуретановая плёнка PPF для BMW: что нужно знать владельцу
           </h2>
@@ -45,7 +45,7 @@ export default function SeoText() {
           transition={{ duration: 0.7, ease: [0.16, 1, 0.3, 1] }}
           className="mt-14 pt-10 border-t border-white/10"
         >
-          <div className="overline mb-5">Готовы перейти к расчёту?</div>
+          <div className="eyebrow mb-5">Готовы перейти к расчёту?</div>
           <p className="text-white/85 text-base md:text-lg leading-relaxed mb-7 max-w-2xl">
             Получите персональную смету по вашей модели BMW или закажите звонок мастера — без обязательств.
           </p>

@@ -23,7 +23,7 @@ export default function Comparison() {
           variants={fadeUp}
           className="max-w-4xl mb-16"
         >
-          <div className="overline mb-5">Сравнение стандартов</div>
+          <div className="eyebrow mb-5">Сравнение стандартов</div>
           <h2 className="font-display text-[34px] md:text-[56px] leading-[1.02] tracking-[-0.03em] mb-6">
             Не рискуйте новым автомобилем:<br />
             <span className="text-[#9a9a9a]">выберите доказуемый протокол безопасности</span>
@@ -44,16 +44,16 @@ export default function Comparison() {
           <div className="border border-white/10 relative">
             <div className="grid grid-cols-[1.4fr_1.5fr_1.5fr]">
               <div className="bg-[#050505] p-6 border-b border-r border-white/10">
-                <div className="overline text-[#9a9a9a]">Параметр</div>
+                <div className="eyebrow text-[#9a9a9a]">Параметр</div>
               </div>
               <div className="bg-[#0d0d0d] p-6 border-b border-r border-white/10 relative">
                 <div className="absolute -top-3 left-6 bg-white text-black px-3 py-1 text-[10px] uppercase tracking-[0.2em] font-medium">
                   Detail Inspector
                 </div>
-                <div className="overline text-white">Премиум-протокол</div>
+                <div className="eyebrow text-white">Премиум-протокол</div>
               </div>
               <div className="bg-[#050505] p-6 border-b border-white/10">
-                <div className="overline text-[#9a9a9a]">Гаражный детейлинг</div>
+                <div className="eyebrow text-[#9a9a9a]">Гаражный детейлинг</div>
               </div>
 
               {COMPARISON.map((row, i) => (
@@ -92,7 +92,7 @@ export default function Comparison() {
               variants={fadeUp}
               className="border border-white/10 p-5 bg-[#0d0d0d]"
             >
-              <div className="overline mb-3">{row.row}</div>
+              <div className="eyebrow mb-3">{row.row}</div>
               <div className="flex items-start gap-2 mb-3">
                 <Check className="size-4 mt-0.5 shrink-0" />
                 <div>

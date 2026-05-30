@@ -18,7 +18,7 @@ export default function Control() {
           transition={{ duration: 0.7, ease: [0.16, 1, 0.3, 1] }}
           className="max-w-4xl mb-16"
         >
-          <div className="overline mb-5">Контроль работ</div>
+          <div className="eyebrow mb-5">Контроль работ</div>
           <h2 className="font-display text-[34px] md:text-[56px] leading-[1.02] tracking-[-0.03em]">
             Следите за работой<br /><span className="text-[#9a9a9a]">над автомобилем онлайн</span>
           </h2>

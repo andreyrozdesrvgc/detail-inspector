@@ -16,7 +16,7 @@ export default function Process() {
           transition={{ duration: 0.7, ease: [0.16, 1, 0.3, 1] }}
           className="max-w-4xl mb-16 md:mb-24"
         >
-          <div className="overline mb-6">Процесс работы</div>
+          <div className="eyebrow mb-6">Процесс работы</div>
           <h2 className="font-display text-[34px] md:text-[56px] leading-[1.02] tracking-[-0.03em] mb-6">
             Инженерный протокол из 6 этапов:<br />
             <span className="text-[#9a9a9a]">от аудита под светом до калибровки радаров</span>
@@ -47,7 +47,7 @@ export default function Process() {
                   <div className="absolute left-0 md:left-1/2 md:-translate-x-1/2 top-0 size-9 border border-white/40 bg-[#050505] flex items-center justify-center font-mono text-[11px]">
                     {s.n}
                   </div>
-                  <div className="overline mb-4">Этап</div>
+                  <div className="eyebrow mb-4">Этап</div>
                   <h3 className="font-display text-2xl md:text-3xl leading-tight">{s.title}</h3>
                 </div>
                 <div className={`mt-4 md:mt-0 md:px-10 ${i % 2 ? "md:text-right" : "md:text-left"}`}>

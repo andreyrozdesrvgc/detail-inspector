@@ -28,7 +28,7 @@ export default function Cases() {
           transition={{ duration: 0.7, ease: [0.16, 1, 0.3, 1] }}
           className="max-w-4xl mb-16"
         >
-          <div className="overline mb-6">Кейсы · BMW</div>
+          <div className="eyebrow mb-6">Кейсы · BMW</div>
           <h2 className="font-display text-[34px] md:text-[56px] leading-[1.02] tracking-[-0.03em]">
             Реальные работы<br /><span className="text-[#9a9a9a]">«до и после»</span>
           </h2>
@@ -56,7 +56,7 @@ export default function Cases() {
               </div>
               <div className="p-6 md:p-8">
                 <div className="flex items-baseline justify-between mb-3">
-                  <div className="overline">{c.duration}</div>
+                  <div className="eyebrow">{c.duration}</div>
                   <div className="font-mono text-xs text-white/60">{c.carPrice}</div>
                 </div>
                 <h3 className="font-display text-xl md:text-2xl mb-3 leading-tight">{c.model}</h3>
@@ -124,7 +124,7 @@ export default function Cases() {
 
                 {/* Details */}
                 <div className="p-8 md:p-10">
-                  <div className="overline mb-4">{active.duration}</div>
+                  <div className="eyebrow mb-4">{active.duration}</div>
                   <h3 className="font-display text-2xl md:text-3xl mb-4 leading-tight">{active.model}</h3>
                   <p className="text-sm text-[#9a9a9a] leading-relaxed mb-6">{active.work}</p>
                   <dl className="border-t border-white/10 pt-6 space-y-3 text-sm mb-8">

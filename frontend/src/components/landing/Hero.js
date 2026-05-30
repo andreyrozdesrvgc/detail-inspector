@@ -71,7 +71,7 @@ export default function Hero() {
             transition={{ duration: 0.9, ease: [0.16, 1, 0.3, 1], delay: 0.2 }}
             className="max-w-4xl"
           >
-            <div className="overline mb-6 text-white/70" data-testid="hero-overline">
+            <div className="eyebrow mb-6 text-white/70" data-testid="hero-overline">
               SEO Landing · BMW · Москва
             </div>
 

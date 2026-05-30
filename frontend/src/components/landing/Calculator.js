@@ -110,7 +110,7 @@ export default function Calculator() {
     >
       <div className="max-w-[1400px] mx-auto px-6 md:px-10">
         <div className="max-w-4xl mb-12 md:mb-16">
-          <div className="overline mb-6">Многошаговый расчёт</div>
+          <div className="eyebrow mb-6">Многошаговый расчёт</div>
           <h2 className="font-display text-[34px] md:text-[56px] leading-[1.02] tracking-[-0.03em]">
             Узнайте точную стоимость оклейки<br />
             <span className="text-[#9a9a9a]">вашего BMW за 60 секунд</span>
@@ -120,7 +120,7 @@ export default function Calculator() {
         <div className="grid grid-cols-1 lg:grid-cols-[1fr_2fr] gap-8 border border-white/10 bg-[#050505]">
           {/* Step indicator */}
           <div className="bg-[#0d0d0d] p-8 md:p-10 border-b lg:border-b-0 lg:border-r border-white/10">
-            <div className="overline mb-8">Шаги</div>
+            <div className="eyebrow mb-8">Шаги</div>
             <ol className="space-y-4">
               {stepLabels.map((s, i) => {
                 const active = i === indicatorIdx;
@@ -173,7 +173,7 @@ export default function Calculator() {
                   >
                     <Check className="size-7 text-black" strokeWidth={2.5} />
                   </motion.div>
-                  <div className="overline mb-3">Расчёт готов</div>
+                  <div className="eyebrow mb-3">Расчёт готов</div>
                   <h3 className="font-display text-3xl md:text-4xl mb-2">
                     {name ? `${name}, ` : ""}ваш проект уже в работе
                   </h3>
@@ -181,7 +181,7 @@ export default function Calculator() {
                     Специалист свяжется в течение 15 минут и подготовит индивидуальное предложение.
                   </p>
                   <div className="border border-white/10 bg-[#0d0d0d] p-6 mb-6">
-                    <div className="overline mb-3">Ориентировочная стоимость</div>
+                    <div className="eyebrow mb-3">Ориентировочная стоимость</div>
                     <div className="font-display text-4xl md:text-5xl tracking-tight">
                       <span className="gold-text">от {result.estimated_price.toLocaleString("ru-RU")} ₽</span>
                     </div>
@@ -204,7 +204,7 @@ export default function Calculator() {
 
               {phase === "contact" && (
                 <motion.div key="contact" {...fadeIn} className="flex-1 flex flex-col">
-                  <div className="overline mb-4">Шаг 4 из 4</div>
+                  <div className="eyebrow mb-4">Шаг 4 из 4</div>
                   <h3 className="font-display text-2xl md:text-3xl mb-3 leading-tight">
                     Куда отправить расчёт?
                   </h3>
@@ -253,14 +253,14 @@ export default function Calculator() {
 
               {phase === "preview" && preview && (
                 <motion.div key="preview" {...fadeIn} className="flex-1 flex flex-col" data-testid="calc-preview">
-                  <div className="overline mb-4">Предварительный расчёт</div>
+                  <div className="eyebrow mb-4">Предварительный расчёт</div>
                   <h3 className="font-display text-2xl md:text-3xl mb-2 leading-tight">
                     {model}
                   </h3>
                   <p className="text-sm text-[#9a9a9a] mb-8">{preview.summary}</p>
 
                   <div className="border border-white/10 bg-[#0d0d0d] p-6 mb-8">
-                    <div className="overline mb-3">Ориентировочная стоимость</div>
+                    <div className="eyebrow mb-3">Ориентировочная стоимость</div>
                     <div className="font-display text-5xl md:text-6xl tracking-tight">
                       <span className="gold-text">от {preview.estimated_price.toLocaleString("ru-RU")} ₽</span>
                     </div>
@@ -292,14 +292,14 @@ export default function Calculator() {
                 <motion.div key="loading" {...fadeIn} className="flex-1 flex items-center justify-center" data-testid="calc-loading">
                   <div className="flex flex-col items-center gap-3 text-[#9a9a9a]">
                     <Loader2 className="size-7 animate-spin" />
-                    <div className="overline">Считаем стоимость</div>
+                    <div className="eyebrow">Считаем стоимость</div>
                   </div>
                 </motion.div>
               )}
 
               {(phase === "step1" || phase === "step2" || phase === "step3") && (
                 <motion.div key={phase} {...fadeIn} className="flex-1 flex flex-col">
-                  <div className="overline mb-4">Шаг {indicatorIdx + 1} из 4</div>
+                  <div className="eyebrow mb-4">Шаг {indicatorIdx + 1} из 4</div>
                   <h3 className="font-display text-2xl md:text-3xl mb-8 leading-tight">
                     {phase === "step1" && <>Выберите модель <span className="gold-text">BMW</span></>}
                     {phase === "step2" && "Какая задача?"}

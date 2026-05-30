@@ -48,7 +48,7 @@ export default function Triggers() {
           custom={0}
           className="mb-16 md:mb-24 max-w-3xl"
         >
-          <div className="overline mb-5">Три причины выбрать нас</div>
+          <div className="eyebrow mb-5">Три причины выбрать нас</div>
           <h2 className="font-display text-[36px] md:text-[56px] leading-[1.0] tracking-[-0.03em]">
             Не «оклейка»,<br /> а <span className="gold-text">инженерный сервис</span>
           </h2>
@@ -70,7 +70,7 @@ export default function Triggers() {
                 <span className="font-display text-[64px] md:text-[80px] leading-none tracking-[-0.05em]">
                   {t.n}
                 </span>
-                <span className="overline">{t.unit}</span>
+                <span className="eyebrow">{t.unit}</span>
               </div>
               <h3 className="font-display text-xl md:text-2xl mb-4 leading-tight">{t.title}</h3>
               <p className="text-[#9a9a9a] text-sm leading-relaxed">{t.desc}</p>

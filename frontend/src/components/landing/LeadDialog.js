@@ -66,7 +66,7 @@ export default function LeadDialog() {
               transition={{ duration: 0.4 }}
               className="p-10"
             >
-              <div className="overline mb-6">Detail Inspector · BMW</div>
+              <div className="eyebrow mb-6">Detail Inspector · BMW</div>
               <h3 className="font-display text-3xl md:text-4xl leading-[1.05] mb-4">
                 Получите персональный расчёт защиты BMW
               </h3>

@@ -33,7 +33,7 @@ export default function ReelsGallery() {
           transition={{ duration: 0.7, ease: [0.16, 1, 0.3, 1] }}
           className="max-w-4xl"
         >
-          <div className="overline mb-5">Reels-кейсы · BMW</div>
+          <div className="eyebrow mb-5">Reels-кейсы · BMW</div>
           <h2 className="font-display text-[34px] md:text-[56px] leading-[1.02] tracking-[-0.03em] mb-5">
             Реальные проекты по защите <span className="gold-text">BMW</span><br /><span className="text-[#9a9a9a]">в формате видео</span>
           </h2>
@@ -73,7 +73,7 @@ export default function ReelsGallery() {
                   REEL · {String(r.id).padStart(2, "0")}
                 </div>
                 <div className="absolute bottom-4 left-4 right-4">
-                  <div className="overline text-white mb-2">BMW · Москва</div>
+                  <div className="eyebrow text-white mb-2">BMW · Москва</div>
                 </div>
               </div>
               <button
