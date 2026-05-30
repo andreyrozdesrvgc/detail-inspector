@@ -1,0 +1,130 @@
+{
+  "theme": "dark",
+  "archetype": "5_luxury_and_4_swiss_high_contrast",
+  "colors": {
+    "background": "#050505",
+    "blocks": "#0d0d0d",
+    "cards": "#151515",
+    "text": {
+      "primary": "#ffffff",
+      "secondary": "#9a9a9a"
+    },
+    "accent": "#ffffff",
+    "border": "#222222",
+    "forbidden_colors": ["gold", "blue", "red", "#7351B7", "#1B93A4"]
+  },
+  "typography": {
+    "headings": {
+      "font_family": "Neue Haas Grotesk, PP Mori, Helvetica Neue, sans-serif",
+      "weight": "extrabold",
+      "tracking": "tracking-tighter",
+      "usage_rules": "No Inter or generic sans for headings. Use fluid scales max text-6xl for Hero."
+    },
+    "body": {
+      "font_family": "Satoshi, Inter, sans-serif",
+      "weight": "normal",
+      "line_height": "leading-relaxed"
+    },
+    "overline": {
+      "font_family": "Satoshi, Inter, sans-serif",
+      "weight": "bold",
+      "tracking": "tracking-[0.2em]",
+      "text_transform": "uppercase"
+    }
+  },
+  "layout_spacing": {
+    "container": "max-w-7xl mx-auto px-6 md:px-12",
+    "section_padding": "py-24 md:py-32",
+    "card_padding": "p-8 md:p-12",
+    "grid_strategy": "bento-tetris for marketing, wide gaps (gap-8 to gap-12)",
+    "border_radius": "rounded-none or max rounded-sm (2px to 4px) for sharp premium feel",
+    "optical_alignment": "left-align for reading, strict bento grids for triggers and cases"
+  },
+  "motion_and_interactions": {
+    "scroll_reveal": "framer-motion fade+upward 0.7s ease-out",
+    "parallax": "subtle background translation on scroll",
+    "hover_states": {
+      "cards": "hover lift (-translate-y-1) with subtle glow (shadow-2xl shadow-white/5)",
+      "buttons": "smooth fill transition, inverted colors on hover (bg-white text-black -> hover:bg-[#151515] hover:text-white border border-white)"
+    },
+    "restrictions": "No sharp effects, no blinking, no random popups (only exit-intent).",
+    "libraries": ["framer-motion", "lucide-react", "react-fast-marquee"]
+  },
+  "components": {
+    "header": {
+      "type": "fixed",
+      "initial_state": "bg-transparent",
+      "scrolled_state": "bg-[#050505]/80 backdrop-blur-xl border-b border-white/10",
+      "elements": ["Logo", "Cases/Process/Contacts links", "Calculate CTA"]
+    },
+    "hero": {
+      "overlay": "bg-black/40 (max 50%)",
+      "layout": "Grid with heavy typography on left, clear CTA, phone number prominent",
+      "image_url": "https://images.unsplash.com/photo-1563826773-1e2b4b2cde42?crop=entropy&cs=srgb&fm=jpg&ixid=M3w4NjA3MDB8MHwxfHNlYXJjaHwxfHxkYXJrJTIwY2luZW1hdGljJTIwQk1XJTIwWDV8ZW58MHx8fHwxNzgwMTA0Mzc3fDA&ixlib=rb-4.1.0&q=85"
+    },
+    "buttons": {
+      "primary": "bg-white text-black font-medium px-8 py-4 uppercase tracking-wider text-sm transition-colors",
+      "secondary": "bg-transparent text-white border border-white/20 hover:border-white px-8 py-4 uppercase tracking-wider text-sm transition-colors"
+    },
+    "quiz_calculator": {
+      "steps": 4,
+      "flow": "Model -> Task -> Condition -> Contact (Phone+Name)",
+      "design": "Clean minimal modal or dedicated section, step indicators, large selectable cards for options"
+    },
+    "team": {
+      "layout": "4 master cards with tab/switch interaction. 3 USP tags per master.",
+      "style": "Monochrome photos, sharp borders"
+    },
+    "guarantee_documents": {
+      "interaction": "Interactive A4 preview fan spread on right, cards on left. Modal view with zoom/fullscreen/swipe."
+    },
+    "marquee": {
+      "content": "BMW Logos (B&W or White 80% opacity)",
+      "speed": "25-30s loop",
+      "mask": "gradient mask on edges for smooth fade"
+    },
+    "reels_gallery": {
+      "aspect_ratio": "9:16",
+      "count": 10,
+      "layout": "horizontal scroll desktop, swipe mobile",
+      "elements": "unique CTA under each video"
+    }
+  },
+  "media": {
+    "hero_bmw": {
+      "url": "https://images.unsplash.com/photo-1563826773-1e2b4b2cde42?crop=entropy&cs=srgb&fm=jpg&ixid=M3w4NjA3MDB8MHwxfHNlYXJjaHwxfHxkYXJrJTIwY2luZW1hdGljJTIwQk1XJTIwWDV8ZW58MHx8fHwxNzgwMTA0Mzc3fDA&ixlib=rb-4.1.0&q=85",
+      "description": "Dark cinematic BMW photo with DRLs on"
+    },
+    "hero_bmw_alt": {
+      "url": "https://images.unsplash.com/photo-1728060703475-d17c93c0b430?crop=entropy&cs=srgb&fm=jpg&ixid=M3w4NjA3MDB8MHwxfHNlYXJjaHwzfHxkYXJrJTIwY2luZW1hdGljJTIwQk1XJTIwWDV8ZW58MHx8fHwxNzgwMTA0Mzc3fDA&ixlib=rb-4.1.0&q=85",
+      "description": "Front facing BMW in the dark"
+    },
+    "process_1": {
+      "url": "https://images.pexels.com/photos/36021355/pexels-photo-36021355.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=650&w=940",
+      "description": "PPF installation process close up"
+    },
+    "process_2": {
+      "url": "https://images.pexels.com/photos/10126657/pexels-photo-10126657.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=650&w=940",
+      "description": "Mechanic applying vinyl wrap"
+    },
+    "team_worker_1": {
+      "url": "https://images.pexels.com/photos/6872174/pexels-photo-6872174.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=650&w=940",
+      "description": "Premium garage worker washing luxury car"
+    },
+    "team_worker_2": {
+      "url": "https://images.pexels.com/photos/20051458/pexels-photo-20051458.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=650&w=940",
+      "description": "Garage expert detailing car hood"
+    }
+  },
+  "instructions_to_main_agent": [
+    "Use ONLY pure HTML + Tailwind for structural layouts. Use shadcn/ui strictly for interactive bits (dialogs, accordions).",
+    "Strictly adhere to the color palette. No blue, gold, or red anywhere.",
+    "Ensure 1px solid borders (#222222 or white/10) to separate dark elements instead of shadows.",
+    "Add 'data-testid' to all buttons, links, form inputs, and interactive components.",
+    "Implement the quiz using a step-based state in React.",
+    "Implement Framer Motion specifically for the fade+up scroll reveal as defined.",
+    "Keep typography huge and tight in headings, generous line-height in body text.",
+    "For the guarantee A4 fan spread, use Framer Motion to fan out the cards visually.",
+    "All components must be in .js (React), not .tsx."
+  ]
+}
