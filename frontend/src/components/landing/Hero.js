@@ -1,13 +1,15 @@
-import { useRef } from "react";
-import { motion, useScroll, useTransform } from "framer-motion";
+import { useEffect, useRef, useState } from "react";
+import { motion, useScroll, useTransform, AnimatePresence } from "framer-motion";
 import { useLead } from "@/lib/leadContext";
 
-const HERO_IMG =
-  "https://images.unsplash.com/photo-1563826773-1e2b4b2cde42?w=2400&q=85&auto=format&fit=crop";
+const HERO_IMAGES = ["/hero/1.webp", "/hero/2.webp"];
+const ROTATE_MS = 10000;
 
 export default function Hero() {
   const { openLead } = useLead();
   const ref = useRef(null);
+  const [idx, setIdx] = useState(0);
+
   const { scrollYProgress } = useScroll({
     target: ref,
     offset: ["start start", "end start"],
@@ -15,6 +17,13 @@ export default function Hero() {
   const scale = useTransform(scrollYProgress, [0, 1], [1, 1.12]);
   const opacity = useTransform(scrollYProgress, [0, 0.7], [1, 0.3]);
   const y = useTransform(scrollYProgress, [0, 1], [0, 80]);
+
+  useEffect(() => {
+    const t = setInterval(() => {
+      setIdx((i) => (i + 1) % HERO_IMAGES.length);
+    }, ROTATE_MS);
+    return () => clearInterval(t);
+  }, []);
 
   return (
     <section
@@ -24,15 +33,34 @@ export default function Hero() {
       className="relative w-full min-h-screen overflow-hidden bg-[#050505]"
     >
       <motion.div style={{ scale, opacity }} className="absolute inset-0 z-0">
+        {/* Preload both images, crossfade between them */}
+        <AnimatePresence mode="sync">
+          <motion.div
+            key={idx}
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            transition={{ duration: 1.6, ease: [0.4, 0, 0.2, 1] }}
+            className="absolute inset-0"
+          >
+            <img
+              src={HERO_IMAGES[idx]}
+              alt="BMW премиум защита полиуретановой плёнкой"
+              loading="eager"
+              fetchpriority="high"
+              className="w-full h-full object-cover"
+            />
+          </motion.div>
+        </AnimatePresence>
+        {/* Preload the next image invisibly */}
         <img
-          src={HERO_IMG}
-          alt="BMW премиум защита полиуретановой плёнкой"
-          loading="eager"
-          fetchpriority="high"
-          className="w-full h-full object-cover"
+          src={HERO_IMAGES[(idx + 1) % HERO_IMAGES.length]}
+          alt=""
+          aria-hidden
+          className="absolute opacity-0 pointer-events-none w-1 h-1"
         />
-        <div className="absolute inset-0 bg-gradient-to-b from-[#050505]/40 via-[#050505]/60 to-[#050505]" />
-        <div className="absolute inset-0 bg-gradient-to-r from-[#050505]/80 via-transparent to-transparent" />
+        <div className="absolute inset-0 bg-gradient-to-b from-[#050505]/40 via-[#050505]/55 to-[#050505]" />
+        <div className="absolute inset-0 bg-gradient-to-r from-[#050505]/80 via-[#050505]/30 to-transparent" />
       </motion.div>
 
       <motion.div style={{ y }} className="relative z-10 min-h-screen flex flex-col">
@@ -81,6 +109,21 @@ export default function Hero() {
               >
                 <span>Подробнее</span>
               </a>
+            </div>
+
+            {/* Slide indicators */}
+            <div className="flex items-center gap-2 mt-10">
+              {HERO_IMAGES.map((_, i) => (
+                <button
+                  key={i}
+                  onClick={() => setIdx(i)}
+                  data-testid={`hero-slide-${i}`}
+                  aria-label={`Слайд ${i + 1}`}
+                  className={`h-[2px] transition-all duration-700 ${
+                    idx === i ? "w-12 bg-white" : "w-6 bg-white/30 hover:bg-white/60"
+                  }`}
+                />
+              ))}
             </div>
           </motion.div>
         </div>
