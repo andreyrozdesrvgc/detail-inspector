@@ -8,7 +8,7 @@ export default function SeoText() {
   return (
     <section
       data-testid="seo-text-section"
-      className="bg-[#050505] py-24 md:py-32 border-t border-white/5"
+      className="bg-[#050505] py-24 md:py-32"
     >
       <div className="max-w-[900px] mx-auto px-6 md:px-10">
         <motion.div

@@ -52,7 +52,7 @@ export default function Guarantee() {
   return (
     <section
       data-testid="guarantee-section"
-      className="bg-[#050505] py-24 md:py-32 border-t border-white/5 relative overflow-hidden"
+      className="bg-[#050505] py-24 md:py-32 relative overflow-hidden"
     >
       <div className="absolute inset-0 grain" />
       <div className="max-w-[1400px] mx-auto px-6 md:px-10 relative">
@@ -67,7 +67,7 @@ export default function Guarantee() {
             >
               <div className="overline mb-5">Документальная гарантия</div>
               <h2 className="font-display text-[32px] md:text-[52px] leading-[1.02] tracking-[-0.03em] mb-6">
-                Каждый автомобиль сопровождается<br />
+                Каждый автомобиль <span className="gold-text">сопровождается</span><br />
                 <span className="text-[#9a9a9a]">официальным пакетом документов</span>
               </h2>
               <p className="text-[#9a9a9a] text-base md:text-lg leading-relaxed">
@@ -130,9 +130,9 @@ export default function Guarantee() {
             </motion.div>
           </div>
 
-          {/* Fan spread of documents */}
-          <div className="hidden lg:flex items-center justify-center min-h-[600px] relative">
-            <div className="relative h-[450px] flex items-center justify-center">
+          {/* Fan spread of documents + CTA */}
+          <div className="hidden lg:flex flex-col items-center justify-center relative">
+            <div className="relative h-[450px] flex items-center justify-center w-full">
               {DOCS.map((d, i) => {
                 const angle = (i - 1) * 8;
                 const offsetX = (i - 1) * 50;
@@ -147,6 +147,26 @@ export default function Guarantee() {
                 );
               })}
             </div>
+
+            {/* CTA centered under fan, level with last left card */}
+            <motion.div
+              initial={{ opacity: 0, y: 16 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ duration: 0.7, ease: [0.16, 1, 0.3, 1] }}
+              className="mt-10 flex flex-col items-center text-center"
+            >
+              <div className="text-[11px] uppercase tracking-[0.22em] text-[#9a9a9a] mb-4">
+                Сметы прозрачны до рубля
+              </div>
+              <button
+                onClick={openLeadFromGuarantee}
+                data-testid="guarantee-cta"
+                className="btn-gold px-10 py-4 uppercase tracking-[0.2em] text-[11px] font-semibold rounded-sm"
+              >
+                <span>Рассчитать стоимость</span>
+              </button>
+            </motion.div>
           </div>
 
           {/* Mobile swipe row */}

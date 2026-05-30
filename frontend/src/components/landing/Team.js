@@ -11,7 +11,7 @@ export default function Team() {
   return (
     <section
       data-testid="team-section"
-      className="bg-[#050505] py-24 md:py-32 border-t border-white/5"
+      className="bg-[#050505] py-24 md:py-32"
     >
       <div className="max-w-[1400px] mx-auto px-6 md:px-10">
         <motion.div
@@ -23,7 +23,7 @@ export default function Team() {
         >
           <div className="overline mb-5">Команда</div>
           <h2 className="font-display text-[34px] md:text-[56px] leading-[1.02] tracking-[-0.03em]">
-            Ваши BMW в руках<br /><span className="text-[#9a9a9a]">лучших специалистов Москвы</span>
+            Ваши <span className="gold-text">BMW</span> в руках<br /><span className="text-[#9a9a9a]">лучших специалистов Москвы</span>
           </h2>
         </motion.div>
 
@@ -77,9 +77,9 @@ export default function Team() {
                 <p className="text-white/85 text-base leading-relaxed">{member.task}</p>
               </div>
 
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-px bg-white/5 mb-8 border border-white/10">
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-3 mb-8">
                 {member.tags.map((tag, i) => (
-                  <div key={i} className="bg-[#151515] p-5">
+                  <div key={i} className="gold-frame bg-[#0a0a0a] p-5">
                     <div className="font-display text-base text-white mb-2 leading-tight">{tag.t}</div>
                     <div className="text-xs text-[#9a9a9a] leading-relaxed">{tag.d}</div>
                   </div>

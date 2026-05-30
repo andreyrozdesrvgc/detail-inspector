@@ -32,7 +32,7 @@ export default function FinalCTA() {
   return (
     <section
       data-testid="final-cta-section"
-      className="bg-[#050505] py-24 md:py-32 border-t border-white/5"
+      className="bg-[#050505] py-24 md:py-32"
     >
       <div className="max-w-[1400px] mx-auto px-6 md:px-10 grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-24 items-center">
         <motion.div

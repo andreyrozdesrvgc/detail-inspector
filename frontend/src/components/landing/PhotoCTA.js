@@ -7,7 +7,7 @@ export default function PhotoCTA() {
   return (
     <section
       data-testid="photo-cta-section"
-      className="bg-[#0d0d0d] py-24 md:py-32 border-t border-white/5 relative overflow-hidden"
+      className="bg-[#0d0d0d] py-24 md:py-32 relative overflow-hidden"
     >
       <div className="absolute inset-0 opacity-30">
         <img
@@ -29,7 +29,7 @@ export default function PhotoCTA() {
         <div className="overline mb-6 mx-auto" style={{ display: "inline-block" }}>Быстрый расчёт</div>
         <h2 className="font-display text-[34px] md:text-[64px] leading-[1.0] tracking-[-0.04em] mb-8">
           Отправьте фото автомобиля<br />
-          <span className="text-[#9a9a9a]">и получите расчёт за 15 минут</span>
+          <span className="text-[#9a9a9a]">и получите расчёт за <span className="gold-text">15 минут</span></span>
         </h2>
         <p className="text-[#9a9a9a] text-base md:text-lg max-w-xl mx-auto mb-10 leading-relaxed">
           Мастер изучит снимки кузова и подготовит предварительную смету до очного осмотра.

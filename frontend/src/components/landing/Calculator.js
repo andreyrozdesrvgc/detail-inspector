@@ -106,7 +106,7 @@ export default function Calculator() {
     <section
       id="calculator"
       data-testid="calculator-section"
-      className="bg-[#0d0d0d] py-24 md:py-32 border-t border-white/5"
+      className="bg-[#0d0d0d] py-24 md:py-32"
     >
       <div className="max-w-[1400px] mx-auto px-6 md:px-10">
         <div className="max-w-4xl mb-12 md:mb-16">
@@ -146,9 +146,7 @@ export default function Calculator() {
             <div className="mt-10 pt-8 border-t border-white/10">
               <div className="gold-frame relative bg-[#0a0a0a] p-5">
                 <div className="flex items-start gap-3">
-                  <div className="size-8 border border-[var(--gold-2)]/50 flex items-center justify-center shrink-0">
-                    <Gift className="size-4 text-[var(--gold-3)]" strokeWidth={1.6} />
-                  </div>
+                  <Gift className="size-5 text-[var(--gold-3)] shrink-0 mt-0.5" strokeWidth={1.6} />
                   <div>
                     <div className="text-[10px] uppercase tracking-[0.22em] mb-1.5 gold-text font-semibold">
                       Подарок при расчёте
@@ -303,7 +301,7 @@ export default function Calculator() {
                 <motion.div key={phase} {...fadeIn} className="flex-1 flex flex-col">
                   <div className="overline mb-4">Шаг {indicatorIdx + 1} из 4</div>
                   <h3 className="font-display text-2xl md:text-3xl mb-8 leading-tight">
-                    {phase === "step1" && "Выберите модель BMW"}
+                    {phase === "step1" && <>Выберите модель <span className="gold-text">BMW</span></>}
                     {phase === "step2" && "Какая задача?"}
                     {phase === "step3" && "Состояние автомобиля"}
                   </h3>

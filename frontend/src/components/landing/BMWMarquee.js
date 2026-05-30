@@ -16,7 +16,7 @@ export default function BMWMarquee() {
   return (
     <section
       data-testid="bmw-marquee"
-      className="bg-[#050505] py-2 md:py-3 border-y border-white/5 overflow-hidden"
+      className="bg-[#050505] py-2 md:py-3 overflow-hidden"
       aria-label="BMW специализация"
     >
       <div className="marquee-mask relative h-[90px] md:h-[120px] flex items-center">

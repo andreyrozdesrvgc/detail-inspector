@@ -9,7 +9,7 @@ export default function FAQSection() {
   return (
     <section
       data-testid="faq-section"
-      className="bg-[#0d0d0d] py-24 md:py-32 border-t border-white/5"
+      className="bg-[#0d0d0d] py-24 md:py-32"
     >
       <div className="max-w-[1400px] mx-auto px-6 md:px-10 grid grid-cols-1 lg:grid-cols-[1fr_1.6fr] gap-12 lg:gap-20">
         <motion.div
@@ -32,9 +32,7 @@ export default function FAQSection() {
             className="mt-10 border border-white/10 bg-[#050505] p-7"
           >
             <div className="flex items-center gap-3 mb-3">
-              <div className="size-9 border border-[var(--gold-2)]/40 flex items-center justify-center">
-                <PhoneCall className="size-4 text-[var(--gold-3)]" strokeWidth={1.6} />
-              </div>
+              <PhoneCall className="size-5 text-[var(--gold-3)] shrink-0" strokeWidth={1.6} />
               <div className="text-[11px] uppercase tracking-[0.22em] gold-text font-semibold">Не нашли ответ?</div>
             </div>
             <p className="text-sm text-[#9a9a9a] leading-relaxed mb-5">

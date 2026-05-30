@@ -23,7 +23,7 @@ export default function ReelsGallery() {
   return (
     <section
       data-testid="reels-section"
-      className="bg-[#050505] py-24 md:py-32 border-t border-white/5"
+      className="bg-[#050505] py-24 md:py-32"
     >
       <div className="max-w-[1400px] mx-auto px-6 md:px-10 mb-12">
         <motion.div
@@ -35,7 +35,7 @@ export default function ReelsGallery() {
         >
           <div className="overline mb-5">Reels-кейсы · BMW</div>
           <h2 className="font-display text-[34px] md:text-[56px] leading-[1.02] tracking-[-0.03em] mb-5">
-            Реальные проекты по защите BMW<br /><span className="text-[#9a9a9a]">в формате видео</span>
+            Реальные проекты по защите <span className="gold-text">BMW</span><br /><span className="text-[#9a9a9a]">в формате видео</span>
           </h2>
           <p className="text-[#9a9a9a] text-base md:text-lg max-w-2xl leading-relaxed">
             Посмотрите, как мы работаем с автомобилями премиум-класса.

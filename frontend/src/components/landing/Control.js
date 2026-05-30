@@ -8,7 +8,7 @@ export default function Control() {
   return (
     <section
       data-testid="control-section"
-      className="bg-[#050505] py-24 md:py-32 border-t border-white/5"
+      className="bg-[#050505] py-24 md:py-32"
     >
       <div className="max-w-[1400px] mx-auto px-6 md:px-10">
         <motion.div

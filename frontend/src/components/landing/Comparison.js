@@ -13,7 +13,7 @@ export default function Comparison() {
   return (
     <section
       data-testid="comparison-section"
-      className="bg-[#050505] py-24 md:py-32 border-t border-white/5"
+      className="bg-[#050505] py-24 md:py-32"
     >
       <div className="max-w-[1400px] mx-auto px-6 md:px-10">
         <motion.div
@@ -39,37 +39,45 @@ export default function Comparison() {
           whileInView="show"
           viewport={{ once: true }}
           variants={fadeUp}
-          className="hidden md:block border border-white/10"
+          className="hidden md:block relative"
         >
-          <div className="grid grid-cols-[1.4fr_1.5fr_1.5fr]">
-            <div className="bg-[#050505] p-6 border-b border-r border-white/10">
-              <div className="overline text-[#9a9a9a]">Параметр</div>
-            </div>
-            <div className="bg-[#0d0d0d] p-6 border-b border-r border-white/10 relative">
-              <div className="absolute -top-3 left-6 bg-white text-black px-3 py-1 text-[10px] uppercase tracking-[0.2em] font-medium">
-                Detail Inspector
+          <div className="border border-white/10 relative">
+            <div className="grid grid-cols-[1.4fr_1.5fr_1.5fr]">
+              <div className="bg-[#050505] p-6 border-b border-r border-white/10">
+                <div className="overline text-[#9a9a9a]">Параметр</div>
               </div>
-              <div className="overline text-white">Премиум-протокол</div>
-            </div>
-            <div className="bg-[#050505] p-6 border-b border-white/10">
-              <div className="overline text-[#9a9a9a]">Гаражный детейлинг</div>
-            </div>
+              <div className="bg-[#0d0d0d] p-6 border-b border-r border-white/10 relative">
+                <div className="absolute -top-3 left-6 bg-white text-black px-3 py-1 text-[10px] uppercase tracking-[0.2em] font-medium">
+                  Detail Inspector
+                </div>
+                <div className="overline text-white">Премиум-протокол</div>
+              </div>
+              <div className="bg-[#050505] p-6 border-b border-white/10">
+                <div className="overline text-[#9a9a9a]">Гаражный детейлинг</div>
+              </div>
 
-            {COMPARISON.map((row, i) => (
-              <div key={i} className="contents">
-                <div className="bg-[#050505] p-6 border-b border-r border-white/10 text-sm text-white/80">
-                  {row.row}
+              {COMPARISON.map((row, i) => (
+                <div key={i} className="contents">
+                  <div className="bg-[#050505] p-6 border-b border-r border-white/10 text-sm text-white/80">
+                    {row.row}
+                  </div>
+                  <div className="bg-[#0d0d0d] p-6 border-b border-r border-white/10 text-sm text-white flex items-start gap-3">
+                    <Check className="size-4 mt-0.5 shrink-0 text-white" />
+                    <span>{row.us}</span>
+                  </div>
+                  <div className="bg-[#050505] p-6 border-b border-white/10 text-sm text-[#9a9a9a] flex items-start gap-3">
+                    <X className="size-4 mt-0.5 shrink-0 text-[#9a9a9a]" />
+                    <span>{row.them}</span>
+                  </div>
                 </div>
-                <div className="bg-[#0d0d0d] p-6 border-b border-r border-white/10 text-sm text-white flex items-start gap-3">
-                  <Check className="size-4 mt-0.5 shrink-0 text-white" />
-                  <span>{row.us}</span>
-                </div>
-                <div className="bg-[#050505] p-6 border-b border-white/10 text-sm text-[#9a9a9a] flex items-start gap-3">
-                  <X className="size-4 mt-0.5 shrink-0 text-[#9a9a9a]" />
-                  <span>{row.them}</span>
-                </div>
-              </div>
-            ))}
+              ))}
+            </div>
+            {/* Gold animated frame around Detail Inspector column */}
+            <div
+              aria-hidden
+              className="gold-frame absolute pointer-events-none"
+              style={{ left: "31.82%", width: "34.09%", top: 0, bottom: 0 }}
+            />
           </div>
         </motion.div>
 

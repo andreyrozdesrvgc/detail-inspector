@@ -37,7 +37,7 @@ export default function Triggers() {
     <section
       id="triggers"
       data-testid="triggers-section"
-      className="bg-[#050505] relative py-24 md:py-32 border-t border-white/5"
+      className="bg-[#050505] relative py-24 md:py-32"
     >
       <div className="max-w-[1400px] mx-auto px-6 md:px-10">
         <motion.div
@@ -50,7 +50,7 @@ export default function Triggers() {
         >
           <div className="overline mb-5">Три причины выбрать нас</div>
           <h2 className="font-display text-[36px] md:text-[56px] leading-[1.0] tracking-[-0.03em]">
-            Не «оклейка»,<br /> а инженерный сервис
+            Не «оклейка»,<br /> а <span className="gold-text">инженерный сервис</span>
           </h2>
         </motion.div>
 
