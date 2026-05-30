@@ -33,51 +33,68 @@ export default function Comparison() {
           </p>
         </motion.div>
 
-        {/* Desktop comparison */}
+        {/* Desktop comparison — 3 side-by-side columns; middle column has gold animated frame */}
         <motion.div
           initial="hidden"
           whileInView="show"
           viewport={{ once: true }}
           variants={fadeUp}
-          className="hidden md:block relative"
+          className="hidden md:grid grid-cols-[1.4fr_1.5fr_1.5fr] gap-3 items-stretch"
         >
-          <div className="border border-white/10 relative">
-            <div className="grid grid-cols-[1.4fr_1.5fr_1.5fr]">
-              <div className="bg-[#050505] p-6 border-b border-r border-white/10">
-                <div className="eyebrow text-[#9a9a9a]">Параметр</div>
-              </div>
-              <div className="bg-[#0d0d0d] p-6 border-b border-r border-white/10 relative">
-                <div className="absolute -top-3 left-6 bg-white text-black px-3 py-1 text-[10px] uppercase tracking-[0.2em] font-medium">
-                  Detail Inspector
-                </div>
-                <div className="eyebrow text-white">Премиум-протокол</div>
-              </div>
-              <div className="bg-[#050505] p-6 border-b border-white/10">
-                <div className="eyebrow text-[#9a9a9a]">Гаражный детейлинг</div>
-              </div>
-
-              {COMPARISON.map((row, i) => (
-                <div key={i} className="contents">
-                  <div className="bg-[#050505] p-6 border-b border-r border-white/10 text-sm text-white/80">
-                    {row.row}
-                  </div>
-                  <div className="bg-[#0d0d0d] p-6 border-b border-r border-white/10 text-sm text-white flex items-start gap-3">
-                    <Check className="size-4 mt-0.5 shrink-0 text-white" />
-                    <span>{row.us}</span>
-                  </div>
-                  <div className="bg-[#050505] p-6 border-b border-white/10 text-sm text-[#9a9a9a] flex items-start gap-3">
-                    <X className="size-4 mt-0.5 shrink-0 text-[#9a9a9a]" />
-                    <span>{row.them}</span>
-                  </div>
-                </div>
-              ))}
+          {/* Параметр column */}
+          <div className="border border-white/10 bg-[#050505] flex flex-col">
+            <div className="p-6 border-b border-white/10">
+              <div className="eyebrow text-[#9a9a9a]">Параметр</div>
             </div>
-            {/* Gold animated frame around Detail Inspector column */}
-            <div
-              aria-hidden
-              className="gold-frame absolute pointer-events-none"
-              style={{ left: "31.82%", width: "34.09%", top: 0, bottom: 0 }}
-            />
+            {COMPARISON.map((row, i) => (
+              <div
+                key={i}
+                className={`p-6 text-sm text-white/80 flex-1 ${
+                  i < COMPARISON.length - 1 ? "border-b border-white/10" : ""
+                }`}
+              >
+                {row.row}
+              </div>
+            ))}
+          </div>
+
+          {/* Detail Inspector column with gold animated frame */}
+          <div className="gold-frame bg-[#0d0d0d] flex flex-col relative">
+            <div className="absolute -top-3 left-6 bg-white text-black px-3 py-1 text-[10px] uppercase tracking-[0.2em] font-medium z-10">
+              Detail Inspector
+            </div>
+            <div className="p-6 border-b border-white/10">
+              <div className="eyebrow text-white">Премиум-протокол</div>
+            </div>
+            {COMPARISON.map((row, i) => (
+              <div
+                key={i}
+                className={`p-6 text-sm text-white flex items-start gap-3 flex-1 ${
+                  i < COMPARISON.length - 1 ? "border-b border-white/10" : ""
+                }`}
+              >
+                <Check className="size-4 mt-0.5 shrink-0 text-white" />
+                <span>{row.us}</span>
+              </div>
+            ))}
+          </div>
+
+          {/* Гаражный детейлинг column */}
+          <div className="border border-white/10 bg-[#050505] flex flex-col">
+            <div className="p-6 border-b border-white/10">
+              <div className="eyebrow text-[#9a9a9a]">Гаражный детейлинг</div>
+            </div>
+            {COMPARISON.map((row, i) => (
+              <div
+                key={i}
+                className={`p-6 text-sm text-[#9a9a9a] flex items-start gap-3 flex-1 ${
+                  i < COMPARISON.length - 1 ? "border-b border-white/10" : ""
+                }`}
+              >
+                <X className="size-4 mt-0.5 shrink-0 text-[#9a9a9a]" />
+                <span>{row.them}</span>
+              </div>
+            ))}
           </div>
         </motion.div>
 
