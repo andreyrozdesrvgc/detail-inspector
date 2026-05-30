@@ -10,7 +10,7 @@ export default function Footer() {
       <div className="max-w-[1400px] mx-auto px-6 md:px-10 grid grid-cols-1 md:grid-cols-[1.5fr_1fr_1fr_1.4fr] gap-12">
         <div>
         <div className="flex items-center gap-3 mb-6">
-            <img src="/logo.svg" alt="Detail Inspector" className="h-10 w-auto" />
+            <img src="/logo.png" alt="Detail Inspector" className="h-12 w-auto" />
           </div>
           <p className="text-sm text-[#9a9a9a] leading-relaxed max-w-sm mb-6">
             Премиальная оклейка BMW полиуретановой плёнкой. Защита ЛКП, сохранение стоимости автомобиля на 10+ лет.
