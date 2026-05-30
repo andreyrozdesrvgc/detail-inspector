@@ -94,6 +94,14 @@ export const CASES = [
     duration: "12 дней",
     price: "от 340 000 ₽",
     img: "https://images.unsplash.com/photo-1563826773-1e2b4b2cde42?w=1400&q=85&auto=format&fit=crop",
+    gallery: [
+      "https://images.unsplash.com/photo-1563826773-1e2b4b2cde42?w=1800&q=85&auto=format&fit=crop",
+      "https://images.unsplash.com/photo-1555215695-3004980ad54e?w=1400&q=85&auto=format&fit=crop",
+      "https://images.pexels.com/photos/36021355/pexels-photo-36021355.jpeg?auto=compress&cs=tinysrgb&dpr=2&w=1400",
+      "https://images.unsplash.com/photo-1614162692292-7ac56d7f7f1e?w=1400&q=85&auto=format&fit=crop",
+      "https://images.unsplash.com/photo-1610647752706-3bb12232b3ab?w=1400&q=85&auto=format&fit=crop",
+      "https://images.pexels.com/photos/10126657/pexels-photo-10126657.jpeg?auto=compress&cs=tinysrgb&dpr=2&w=1400",
+    ],
   },
   {
     model: "BMW M5 G90",
@@ -102,6 +110,14 @@ export const CASES = [
     duration: "14 дней",
     price: "от 420 000 ₽",
     img: "https://images.unsplash.com/photo-1555215695-3004980ad54e?w=1400&q=85&auto=format&fit=crop",
+    gallery: [
+      "https://images.unsplash.com/photo-1555215695-3004980ad54e?w=1800&q=85&auto=format&fit=crop",
+      "https://images.unsplash.com/photo-1607853554439-0069ec0f29b6?w=1400&q=85&auto=format&fit=crop",
+      "https://images.unsplash.com/photo-1617531653332-bd46c24f2068?w=1400&q=85&auto=format&fit=crop",
+      "https://images.pexels.com/photos/36021355/pexels-photo-36021355.jpeg?auto=compress&cs=tinysrgb&dpr=2&w=1400",
+      "https://images.unsplash.com/photo-1610647752706-3bb12232b3ab?w=1400&q=85&auto=format&fit=crop",
+      "https://images.pexels.com/photos/20051458/pexels-photo-20051458.jpeg?auto=compress&cs=tinysrgb&dpr=2&w=1400",
+    ],
   },
   {
     model: "BMW 7 Series G70",
@@ -110,6 +126,14 @@ export const CASES = [
     duration: "13 дней",
     price: "от 410 000 ₽",
     img: "https://images.unsplash.com/photo-1614162692292-7ac56d7f7f1e?w=1400&q=85&auto=format&fit=crop",
+    gallery: [
+      "https://images.unsplash.com/photo-1614162692292-7ac56d7f7f1e?w=1800&q=85&auto=format&fit=crop",
+      "https://images.unsplash.com/photo-1563826773-1e2b4b2cde42?w=1400&q=85&auto=format&fit=crop",
+      "https://images.pexels.com/photos/10126657/pexels-photo-10126657.jpeg?auto=compress&cs=tinysrgb&dpr=2&w=1400",
+      "https://images.unsplash.com/photo-1617531653332-bd46c24f2068?w=1400&q=85&auto=format&fit=crop",
+      "https://images.unsplash.com/photo-1607853554439-0069ec0f29b6?w=1400&q=85&auto=format&fit=crop",
+      "https://images.pexels.com/photos/6872174/pexels-photo-6872174.jpeg?auto=compress&cs=tinysrgb&dpr=2&w=1400",
+    ],
   },
   {
     model: "BMW X7 G07",
@@ -118,6 +142,14 @@ export const CASES = [
     duration: "7 дней",
     price: "от 220 000 ₽",
     img: "https://images.unsplash.com/photo-1610647752706-3bb12232b3ab?w=1400&q=85&auto=format&fit=crop",
+    gallery: [
+      "https://images.unsplash.com/photo-1610647752706-3bb12232b3ab?w=1800&q=85&auto=format&fit=crop",
+      "https://images.unsplash.com/photo-1555215695-3004980ad54e?w=1400&q=85&auto=format&fit=crop",
+      "https://images.pexels.com/photos/36021355/pexels-photo-36021355.jpeg?auto=compress&cs=tinysrgb&dpr=2&w=1400",
+      "https://images.unsplash.com/photo-1563826773-1e2b4b2cde42?w=1400&q=85&auto=format&fit=crop",
+      "https://images.unsplash.com/photo-1614162692292-7ac56d7f7f1e?w=1400&q=85&auto=format&fit=crop",
+      "https://images.pexels.com/photos/20051458/pexels-photo-20051458.jpeg?auto=compress&cs=tinysrgb&dpr=2&w=1400",
+    ],
   },
   {
     model: "BMW XM",
@@ -126,6 +158,14 @@ export const CASES = [
     duration: "16 дней",
     price: "от 480 000 ₽",
     img: "https://images.unsplash.com/photo-1617531653332-bd46c24f2068?w=1400&q=85&auto=format&fit=crop",
+    gallery: [
+      "https://images.unsplash.com/photo-1617531653332-bd46c24f2068?w=1800&q=85&auto=format&fit=crop",
+      "https://images.unsplash.com/photo-1607853554439-0069ec0f29b6?w=1400&q=85&auto=format&fit=crop",
+      "https://images.unsplash.com/photo-1614162692292-7ac56d7f7f1e?w=1400&q=85&auto=format&fit=crop",
+      "https://images.pexels.com/photos/10126657/pexels-photo-10126657.jpeg?auto=compress&cs=tinysrgb&dpr=2&w=1400",
+      "https://images.unsplash.com/photo-1563826773-1e2b4b2cde42?w=1400&q=85&auto=format&fit=crop",
+      "https://images.pexels.com/photos/6872174/pexels-photo-6872174.jpeg?auto=compress&cs=tinysrgb&dpr=2&w=1400",
+    ],
   },
   {
     model: "BMW M3 G80",
@@ -134,6 +174,14 @@ export const CASES = [
     duration: "11 дней",
     price: "от 380 000 ₽",
     img: "https://images.unsplash.com/photo-1607853554439-0069ec0f29b6?w=1400&q=85&auto=format&fit=crop",
+    gallery: [
+      "https://images.unsplash.com/photo-1607853554439-0069ec0f29b6?w=1800&q=85&auto=format&fit=crop",
+      "https://images.unsplash.com/photo-1555215695-3004980ad54e?w=1400&q=85&auto=format&fit=crop",
+      "https://images.unsplash.com/photo-1617531653332-bd46c24f2068?w=1400&q=85&auto=format&fit=crop",
+      "https://images.unsplash.com/photo-1614162692292-7ac56d7f7f1e?w=1400&q=85&auto=format&fit=crop",
+      "https://images.pexels.com/photos/10126657/pexels-photo-10126657.jpeg?auto=compress&cs=tinysrgb&dpr=2&w=1400",
+      "https://images.pexels.com/photos/20051458/pexels-photo-20051458.jpeg?auto=compress&cs=tinysrgb&dpr=2&w=1400",
+    ],
   },
 ];
 

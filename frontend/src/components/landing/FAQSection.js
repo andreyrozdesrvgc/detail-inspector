@@ -1,8 +1,11 @@
 import { motion } from "framer-motion";
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
 import { FAQ_ITEMS } from "@/lib/data";
+import { useLead } from "@/lib/leadContext";
+import { PhoneCall } from "lucide-react";
 
 export default function FAQSection() {
+  const { openLead } = useLead();
   return (
     <section
       data-testid="faq-section"
@@ -15,10 +18,36 @@ export default function FAQSection() {
           viewport={{ once: true }}
           transition={{ duration: 0.7, ease: [0.16, 1, 0.3, 1] }}
         >
-          <div className="overline mb-5">FAQ</div>
+          <div className="overline mb-6">FAQ</div>
           <h2 className="font-display text-[34px] md:text-[52px] leading-[1.02] tracking-[-0.03em]">
             Частые вопросы<br /><span className="text-[#9a9a9a]">по оклейке BMW</span>
           </h2>
+
+          {/* CTA block below heading */}
+          <motion.div
+            initial={{ opacity: 0, y: 16 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.7, delay: 0.15, ease: [0.16, 1, 0.3, 1] }}
+            className="mt-10 border border-white/10 bg-[#050505] p-7"
+          >
+            <div className="flex items-center gap-3 mb-3">
+              <div className="size-9 border border-[var(--gold-2)]/40 flex items-center justify-center">
+                <PhoneCall className="size-4 text-[var(--gold-3)]" strokeWidth={1.6} />
+              </div>
+              <div className="text-[11px] uppercase tracking-[0.22em] gold-text font-semibold">Не нашли ответ?</div>
+            </div>
+            <p className="text-sm text-[#9a9a9a] leading-relaxed mb-5">
+              Задайте вопрос мастеру напрямую — отвечаем по технологиям, материалам и срокам без скриптов.
+            </p>
+            <button
+              onClick={() => openLead({ source: "faq", note: "Вопрос по FAQ" })}
+              data-testid="faq-cta-btn"
+              className="btn-gold w-full sm:w-auto px-7 py-3.5 uppercase tracking-[0.2em] text-[11px] font-semibold rounded-sm"
+            >
+              <span>Заказать звонок</span>
+            </button>
+          </motion.div>
         </motion.div>
 
         <motion.div

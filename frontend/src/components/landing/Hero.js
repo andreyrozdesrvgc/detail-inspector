@@ -1,8 +1,6 @@
 import { useRef } from "react";
 import { motion, useScroll, useTransform } from "framer-motion";
 import { useLead } from "@/lib/leadContext";
-import { BRAND } from "@/lib/data";
-import { ArrowDown } from "lucide-react";
 
 const HERO_IMG =
   "https://images.unsplash.com/photo-1563826773-1e2b4b2cde42?w=2400&q=85&auto=format&fit=crop";
@@ -25,15 +23,12 @@ export default function Hero() {
       data-testid="hero-section"
       className="relative w-full min-h-screen overflow-hidden bg-[#050505]"
     >
-      <motion.div
-        style={{ scale, opacity }}
-        className="absolute inset-0 z-0"
-      >
+      <motion.div style={{ scale, opacity }} className="absolute inset-0 z-0">
         <img
           src={HERO_IMG}
           alt="BMW премиум защита полиуретановой плёнкой"
           loading="eager"
-          fetchPriority="high"
+          fetchpriority="high"
           className="w-full h-full object-cover"
         />
         <div className="absolute inset-0 bg-gradient-to-b from-[#050505]/40 via-[#050505]/60 to-[#050505]" />
@@ -41,7 +36,7 @@ export default function Hero() {
       </motion.div>
 
       <motion.div style={{ y }} className="relative z-10 min-h-screen flex flex-col">
-        <div className="flex-1 max-w-[1400px] w-full mx-auto px-6 md:px-10 pt-[140px] md:pt-[180px] pb-20 flex flex-col justify-end">
+        <div className="flex-1 max-w-[1400px] w-full mx-auto px-6 md:px-10 pt-[140px] md:pt-[180px] pb-24 md:pb-28 flex flex-col justify-end">
           <motion.div
             initial={{ opacity: 0, y: 30 }}
             animate={{ opacity: 1, y: 0 }}
@@ -49,19 +44,18 @@ export default function Hero() {
             className="max-w-4xl"
           >
             <div className="overline mb-6 text-white/70" data-testid="hero-overline">
-              <span className="inline-block size-1.5 bg-white align-middle mr-3" />
               SEO Landing · BMW · Москва
             </div>
 
             <h1
               data-testid="hero-h1"
-              className="font-display text-[42px] sm:text-[56px] md:text-[80px] lg:text-[96px] leading-[0.95] tracking-[-0.04em] mb-8"
+              className="font-display text-[34px] sm:text-[42px] md:text-[56px] lg:text-[68px] leading-[1.02] tracking-[-0.035em] mb-6"
             >
-              Новый BMW за 12 млн?
+              Новый BMW за <span className="gold-text">12 млн</span>?
               <br />
-              <span className="text-[#9a9a9a]">Защитите ЛКП</span>
+              <span className="text-[#9a9a9a]">Защитите ЛКП</span> от сколов
               <br />
-              от сколов на 10+ лет
+              на 10+ лет
             </h1>
 
             <p
@@ -89,25 +83,6 @@ export default function Hero() {
               </a>
             </div>
           </motion.div>
-        </div>
-
-        <div className="border-t border-white/10">
-          <div className="max-w-[1400px] mx-auto px-6 md:px-10 py-6 flex items-center justify-between">
-            <a
-              href={`tel:${BRAND.phoneRaw}`}
-              data-testid="hero-phone"
-              className="text-xs md:text-sm font-mono text-white/70 hover:text-white transition-colors"
-            >
-              {BRAND.phone}
-            </a>
-            <div className="hidden md:flex items-center gap-2 text-[#9a9a9a] text-xs uppercase tracking-[0.18em]">
-              <ArrowDown className="size-4 animate-bounce" />
-              Прокрутите
-            </div>
-            <div className="text-xs text-white/60 uppercase tracking-[0.18em] font-mono">
-              ПРОТОКОЛ · 5 ЭТАПОВ
-            </div>
-          </div>
         </div>
       </motion.div>
     </section>

@@ -50,14 +50,7 @@ export default function ExitIntent() {
       >
         <DialogTitle className="sr-only">Уходите? Оставьте телефон</DialogTitle>
         <DialogDescription className="sr-only">Получите персональный расчёт стоимости защиты BMW.</DialogDescription>
-        <button
-          onClick={() => setOpen(false)}
-          data-testid="exit-intent-close"
-          className="absolute right-4 top-4 text-white/60 hover:text-white"
-          aria-label="Закрыть"
-        >
-          <X className="size-5" />
-        </button>
+
         <AnimatePresence mode="wait">
           {done ? (
             <motion.div key="done" initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="p-10 text-center">

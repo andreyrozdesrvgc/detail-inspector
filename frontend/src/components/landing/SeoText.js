@@ -1,7 +1,9 @@
 import { motion } from "framer-motion";
 import { SEO_TEXT } from "@/lib/data";
+import { useLead } from "@/lib/leadContext";
 
 export default function SeoText() {
+  const { openLead } = useLead();
   const paragraphs = SEO_TEXT.trim().split(/\n\n+/);
   return (
     <section
@@ -16,7 +18,7 @@ export default function SeoText() {
           transition={{ duration: 0.7, ease: [0.16, 1, 0.3, 1] }}
           className="mb-10"
         >
-          <div className="overline mb-4">Защита BMW в Москве</div>
+          <div className="overline mb-6">Защита BMW в Москве</div>
           <h2 className="font-display text-[28px] md:text-[42px] leading-[1.05] tracking-[-0.03em]">
             Полиуретановая плёнка PPF для BMW: что нужно знать владельцу
           </h2>
@@ -34,6 +36,36 @@ export default function SeoText() {
             </motion.p>
           ))}
         </div>
+
+        {/* CTAs at the end of the article */}
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          transition={{ duration: 0.7, ease: [0.16, 1, 0.3, 1] }}
+          className="mt-14 pt-10 border-t border-white/10"
+        >
+          <div className="overline mb-5">Готовы перейти к расчёту?</div>
+          <p className="text-white/85 text-base md:text-lg leading-relaxed mb-7 max-w-2xl">
+            Получите персональную смету по вашей модели BMW или закажите звонок мастера — без обязательств.
+          </p>
+          <div className="flex flex-wrap gap-3">
+            <button
+              onClick={() => openLead({ source: "seo-quote", note: "Запросить смету" })}
+              data-testid="seo-cta-quote"
+              className="btn-gold px-8 py-4 uppercase tracking-[0.2em] text-[11px] font-semibold rounded-sm"
+            >
+              <span>Запросить смету</span>
+            </button>
+            <button
+              onClick={() => openLead({ source: "seo-callback", note: "Заказать звонок" })}
+              data-testid="seo-cta-callback"
+              className="btn-ghost px-8 py-4 uppercase tracking-[0.18em] text-[11px] font-medium"
+            >
+              <span>Заказать звонок</span>
+            </button>
+          </div>
+        </motion.div>
       </div>
     </section>
   );

@@ -10,6 +10,12 @@
     --muted: #9a9a9a;
     --border: rgba(255, 255, 255, 0.08);
     --border-strong: rgba(255, 255, 255, 0.16);
+
+    /* Gold tokens — sparing, premium */
+    --gold-1: #8a6a1f;
+    --gold-2: #d4b46a;
+    --gold-3: #f5e6b6;
+    --gold-4: #b9923f;
 }
 
 html, body {
@@ -23,7 +29,7 @@ html, body {
 }
 
 *::selection {
-    background: #ffffff;
+    background: var(--gold-2);
     color: #050505;
 }
 
@@ -37,15 +43,10 @@ body {
     font-weight: 800;
 }
 
-.font-body {
-    font-family: 'Inter', 'Satoshi', sans-serif;
-}
+.font-body { font-family: 'Inter', 'Satoshi', sans-serif; }
+.font-mono { font-family: 'JetBrains Mono', ui-monospace, monospace; letter-spacing: 0.02em; }
 
-.font-mono {
-    font-family: 'JetBrains Mono', ui-monospace, monospace;
-    letter-spacing: 0.02em;
-}
-
+/* Overline with line under */
 .overline {
     font-family: 'Inter', sans-serif;
     font-weight: 600;
@@ -53,9 +54,20 @@ body {
     text-transform: uppercase;
     font-size: 11px;
     color: var(--muted);
+    display: inline-block;
+    position: relative;
+    padding-bottom: 12px;
+}
+.overline::after {
+    content: "";
+    position: absolute;
+    left: 0;
+    bottom: 0;
+    width: 48px;
+    height: 1px;
+    background: linear-gradient(90deg, rgba(255,255,255,0.35), rgba(255,255,255,0));
 }
 
-/* Tailwind base layer overrides */
 @layer base {
     :root {
         --background: 0 0% 2%;
@@ -79,15 +91,11 @@ body {
         --ring: 0 0% 80%;
         --radius: 2px;
     }
-    * {
-        @apply border-border;
-    }
-    body {
-        @apply bg-background text-foreground;
-    }
+    * { @apply border-border; }
+    body { @apply bg-background text-foreground; }
 }
 
-/* Premium ambient grain */
+/* Grain */
 .grain::before {
     content: "";
     position: absolute;
@@ -113,21 +121,14 @@ body {
     -webkit-mask-image: linear-gradient(to right, transparent, #000 12%, #000 88%, transparent);
 }
 
-/* Premium hover lift */
-.lift {
-    transition: transform 600ms cubic-bezier(0.16, 1, 0.3, 1),
-                border-color 600ms ease,
-                background-color 600ms ease;
-}
-.lift:hover {
-    transform: translateY(-4px);
-}
+/* Hover lift */
+.lift { transition: transform 600ms cubic-bezier(0.16, 1, 0.3, 1), border-color 600ms ease, background-color 600ms ease; }
+.lift:hover { transform: translateY(-4px); }
 
-/* Hide scrollbar for horizontal reel */
 .no-scrollbar::-webkit-scrollbar { display: none; }
 .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
 
-/* Premium button hover fill */
+/* Buttons */
 .btn-primary {
     position: relative;
     overflow: hidden;
@@ -137,66 +138,128 @@ body {
     transition: color 500ms ease;
 }
 .btn-primary::before {
-    content: "";
-    position: absolute;
-    inset: 0;
+    content: ""; position: absolute; inset: 0;
     background: #050505;
     transform: translateY(101%);
     transition: transform 500ms cubic-bezier(0.65, 0, 0.35, 1);
     z-index: -1;
 }
-.btn-primary:hover {
-    color: #ffffff;
-}
-.btn-primary:hover::before {
-    transform: translateY(0);
-}
-.btn-primary span {
-    position: relative;
-    z-index: 1;
-}
+.btn-primary:hover { color: #ffffff; }
+.btn-primary:hover::before { transform: translateY(0); }
+.btn-primary span { position: relative; z-index: 1; }
 
 .btn-ghost {
-    position: relative;
-    overflow: hidden;
-    isolation: isolate;
-    background: transparent;
-    color: #ffffff;
+    position: relative; overflow: hidden; isolation: isolate;
+    background: transparent; color: #ffffff;
     border: 1px solid rgba(255, 255, 255, 0.2);
     transition: border-color 500ms ease, color 500ms ease;
 }
 .btn-ghost::before {
-    content: "";
-    position: absolute;
-    inset: 0;
-    background: #ffffff;
-    transform: translateY(101%);
+    content: ""; position: absolute; inset: 0;
+    background: #ffffff; transform: translateY(101%);
     transition: transform 500ms cubic-bezier(0.65, 0, 0.35, 1);
     z-index: -1;
 }
-.btn-ghost:hover {
-    color: #050505;
-    border-color: #ffffff;
+.btn-ghost:hover { color: #050505; border-color: #ffffff; }
+.btn-ghost:hover::before { transform: translateY(0); }
+
+/* Gold button — premium accent button */
+.btn-gold {
+    position: relative; overflow: hidden; isolation: isolate;
+    color: #0a0a0a;
+    background: linear-gradient(110deg, var(--gold-1) 0%, var(--gold-3) 25%, var(--gold-2) 50%, var(--gold-3) 75%, var(--gold-1) 100%);
+    background-size: 250% auto;
+    border: 1px solid rgba(212, 180, 106, 0.6);
+    animation: goldFlow 8s ease-in-out infinite;
+    transition: filter 400ms ease, transform 400ms ease;
 }
-.btn-ghost:hover::before {
-    transform: translateY(0);
+.btn-gold:hover { filter: brightness(1.08); transform: translateY(-1px); }
+@keyframes goldFlow {
+    0%, 100% { background-position: 0% center; }
+    50% { background-position: 100% center; }
 }
 
-/* Doc paper styling */
+/* Gold animated text */
+.gold-text {
+    background: linear-gradient(110deg, var(--gold-4) 0%, var(--gold-3) 30%, var(--gold-2) 50%, var(--gold-3) 70%, var(--gold-4) 100%);
+    background-size: 250% auto;
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+    -webkit-text-fill-color: transparent;
+    animation: goldShimmer 7s linear infinite;
+}
+@keyframes goldShimmer {
+    0% { background-position: 0% center; }
+    100% { background-position: 250% center; }
+}
+
+/* Gold subtle divider */
+.gold-divider {
+    height: 1px;
+    background: linear-gradient(90deg, transparent, var(--gold-2), var(--gold-3), var(--gold-2), transparent);
+    background-size: 200% 100%;
+    animation: goldShimmer 8s linear infinite;
+}
+
+/* Gold running border around a card — thin line travels the perimeter */
+.gold-frame {
+    position: relative;
+    isolation: isolate;
+}
+.gold-frame::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    padding: 1px;
+    border-radius: inherit;
+    background:
+        conic-gradient(from var(--gold-angle, 0deg),
+            rgba(212, 180, 106, 0) 0deg,
+            rgba(212, 180, 106, 0) 240deg,
+            var(--gold-3) 295deg,
+            var(--gold-2) 320deg,
+            var(--gold-3) 345deg,
+            rgba(212, 180, 106, 0) 360deg);
+    -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+    -webkit-mask-composite: xor;
+    mask-composite: exclude;
+    animation: goldRotate 6s linear infinite;
+    pointer-events: none;
+    z-index: 0;
+}
+.gold-frame::after {
+    /* faint static gold edge so it never fully disappears */
+    content: "";
+    position: absolute;
+    inset: 0;
+    padding: 1px;
+    border-radius: inherit;
+    background: linear-gradient(135deg, rgba(212,180,106,0.25), rgba(212,180,106,0.06), rgba(212,180,106,0.18));
+    -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+    -webkit-mask-composite: xor;
+    mask-composite: exclude;
+    pointer-events: none;
+    z-index: 0;
+}
+@property --gold-angle {
+    syntax: "<angle>";
+    inherits: false;
+    initial-value: 0deg;
+}
+@keyframes goldRotate {
+    0% { --gold-angle: 0deg; }
+    100% { --gold-angle: 360deg; }
+}
+.gold-frame > * { position: relative; z-index: 1; }
+
+/* Document paper */
 .paper {
-    background: #fafaf7;
-    color: #111;
+    background: #fafaf7; color: #111;
     box-shadow: 0 30px 60px -20px rgba(0,0,0,0.7), 0 2px 6px rgba(0,0,0,0.4);
     border: 1px solid rgba(0,0,0,0.08);
 }
 
-.divider-thin {
-    background: linear-gradient(to right, transparent, rgba(255,255,255,0.15), transparent);
-    height: 1px;
-}
+.divider-thin { background: linear-gradient(to right, transparent, rgba(255,255,255,0.15), transparent); height: 1px; }
 
-/* Hide native focus rings on body but keep keyboard accessible */
-:focus-visible {
-    outline: 1px solid rgba(255,255,255,0.5);
-    outline-offset: 2px;
-}
+:focus-visible { outline: 1px solid rgba(255,255,255,0.5); outline-offset: 2px; }

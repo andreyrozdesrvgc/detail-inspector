@@ -19,7 +19,6 @@ import Footer from "@/components/landing/Footer";
 import LeadDialog from "@/components/landing/LeadDialog";
 import ExitIntent from "@/components/landing/ExitIntent";
 import MobileCTA from "@/components/landing/MobileCTA";
-import FloatingTGCalc from "@/components/landing/FloatingTGCalc";
 
 export default function BMWLanding() {
   return (
@@ -48,7 +47,6 @@ export default function BMWLanding() {
         <LeadDialog />
         <ExitIntent />
         <MobileCTA />
-        <FloatingTGCalc />
       </main>
     </LeadProvider>
   );

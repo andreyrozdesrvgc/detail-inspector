@@ -43,7 +43,7 @@ export default function FinalCTA() {
         >
           <div className="overline mb-5">Запись на осмотр</div>
           <h2 className="font-display text-[36px] md:text-[64px] leading-[1.0] tracking-[-0.04em] mb-6">
-            Готовы защитить ваш&nbsp;BMW<br />
+            Готовы защитить ваш&nbsp;<span className="gold-text">BMW</span><br />
             <span className="text-[#9a9a9a]">по высшему стандарту?</span>
           </h2>
           <p className="text-[#9a9a9a] text-base md:text-lg max-w-md leading-relaxed">

@@ -5,7 +5,7 @@ import { Input } from "@/components/ui/input";
 import { useLead } from "@/lib/leadContext";
 import { submitLead } from "@/lib/api";
 import { toast } from "sonner";
-import { Check, Loader2, X } from "lucide-react";
+import { Check, Loader2 } from "lucide-react";
 
 export default function LeadDialog() {
   const { open, source, prefill, closeLead } = useLead();
@@ -55,14 +55,6 @@ export default function LeadDialog() {
       >
         <DialogTitle className="sr-only">Получите расчёт защиты BMW</DialogTitle>
         <DialogDescription className="sr-only">Форма заявки на персональный расчёт стоимости оклейки BMW.</DialogDescription>
-        <button
-          onClick={closeLead}
-          data-testid="lead-dialog-close"
-          className="absolute right-4 top-4 z-10 text-white/60 hover:text-white transition-colors"
-          aria-label="Закрыть"
-        >
-          <X className="size-5" />
-        </button>
 
         <AnimatePresence mode="wait">
           {step === 1 ? (
@@ -146,15 +138,13 @@ export default function LeadDialog() {
               <p className="text-[#9a9a9a] text-sm mb-8 leading-relaxed max-w-sm mx-auto">
                 Специалист свяжется в течение 15 минут и подготовит расчёт под ваш автомобиль.
               </p>
-              <a
-                href="https://t.me/detail_inspector_bot"
-                target="_blank"
-                rel="noreferrer"
-                data-testid="lead-success-tg"
+              <button
+                onClick={closeLead}
+                data-testid="lead-success-close"
                 className="btn-ghost inline-block px-8 py-3 uppercase tracking-[0.18em] text-xs font-medium"
               >
-                <span>Перейти в онлайн-калькулятор</span>
-              </a>
+                <span>Закрыть</span>
+              </button>
             </motion.div>
           )}
         </AnimatePresence>

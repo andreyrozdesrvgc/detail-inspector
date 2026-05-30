@@ -1,8 +1,9 @@
 import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Dialog, DialogContent, DialogTitle, DialogDescription } from "@/components/ui/dialog";
-import { ChevronLeft, ChevronRight, X, ZoomIn, Maximize2, FileText, ShieldCheck, ClipboardList } from "lucide-react";
+import { ChevronLeft, ChevronRight, ZoomIn, Maximize2, FileText, ShieldCheck, ClipboardList } from "lucide-react";
 import { DOCS } from "@/lib/data";
+import { useLead } from "@/lib/leadContext";
 
 const DocPreview = ({ doc, index, total, angle, large = false, onClick }) => (
   <motion.div
@@ -41,6 +42,9 @@ const ICONS = [ClipboardList, FileText, ShieldCheck];
 
 export default function Guarantee() {
   const [open, setOpen] = useState(null);
+  const { openLead } = useLead();
+
+  const openLeadFromGuarantee = () => openLead({ source: "guarantee" });
 
   const next = () => setOpen((i) => (i + 1) % DOCS.length);
   const prev = () => setOpen((i) => (i - 1 + DOCS.length) % DOCS.length);
@@ -156,6 +160,29 @@ export default function Guarantee() {
             </div>
           </div>
         </div>
+
+        {/* CTA below documents — centered */}
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          transition={{ duration: 0.7, ease: [0.16, 1, 0.3, 1] }}
+          className="mt-16 md:mt-24 flex flex-col items-center text-center"
+        >
+          <div className="text-[11px] uppercase tracking-[0.22em] text-[#9a9a9a] mb-5">
+            Все документы — ваши. Сметы прозрачны до рубля
+          </div>
+          <button
+            onClick={() => openLeadFromGuarantee()}
+            data-testid="guarantee-cta"
+            className="btn-gold px-10 py-4 uppercase tracking-[0.2em] text-[11px] font-semibold rounded-sm"
+          >
+            <span>Рассчитать стоимость</span>
+          </button>
+          <p className="mt-4 text-xs text-[#9a9a9a]/80 max-w-md">
+            Бесплатный осмотр и документальный аудит ЛКП с фиксацией состояния
+          </p>
+        </motion.div>
       </div>
 
       <Dialog open={open !== null} onOpenChange={(o) => !o && setOpen(null)}>
@@ -198,14 +225,6 @@ export default function Guarantee() {
                   </div>
                 </div>
                 <div className="p-8 md:p-10 relative">
-                  <button
-                    onClick={() => setOpen(null)}
-                    className="absolute right-4 top-4 text-white/70 hover:text-white"
-                    aria-label="Закрыть"
-                    data-testid="doc-modal-close"
-                  >
-                    <X className="size-5" />
-                  </button>
                   <div className="overline mb-4">Документ {open + 1} из {DOCS.length}</div>
                   <h3 className="font-display text-2xl md:text-3xl mb-5 leading-tight">{DOCS[open].title}</h3>
                   <p className="text-sm text-[#9a9a9a] leading-relaxed mb-6">{DOCS[open].desc}</p>

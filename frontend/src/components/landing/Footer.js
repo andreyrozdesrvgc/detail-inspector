@@ -27,17 +27,16 @@ export default function Footer() {
         </div>
 
         <div>
-          <div className="overline mb-5">Контакты</div>
+          <div className="overline mb-6">Контакты</div>
           <ul className="space-y-3 text-sm">
             <li><a href={`tel:${BRAND.phoneRaw}`} data-testid="footer-phone" className="text-white hover:text-white/70 transition-colors font-mono">{BRAND.phone}</a></li>
-            <li><a href={BRAND.telegram} target="_blank" rel="noreferrer" className="text-white/85 hover:text-white transition-colors">Telegram</a></li>
             <li><a href={BRAND.whatsapp} target="_blank" rel="noreferrer" className="text-white/85 hover:text-white transition-colors">WhatsApp</a></li>
             <li className="text-[#9a9a9a]">{BRAND.address}</li>
           </ul>
         </div>
 
         <div>
-          <div className="overline mb-5">Документы</div>
+          <div className="overline mb-6">Документы</div>
           <ul className="space-y-3 text-sm">
             <li><a href="#" className="text-white/85 hover:text-white transition-colors">Политика конфиденциальности</a></li>
             <li><a href="#" className="text-white/85 hover:text-white transition-colors">Договор оферты</a></li>
@@ -46,7 +45,7 @@ export default function Footer() {
         </div>
 
         <div>
-          <div className="overline mb-5">Студия в Москве</div>
+          <div className="overline mb-6">Студия в Москве</div>
           <div className="aspect-[4/3] bg-[#0d0d0d] border border-white/10 overflow-hidden relative" data-testid="footer-map">
             {/* Stylized dark map placeholder */}
             <svg viewBox="0 0 400 300" className="w-full h-full">
