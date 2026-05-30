@@ -1,0 +1,3 @@
+User-agent: *
+Allow: /
+Sitemap: https://detail-inspector.ru/sitemap.xml
