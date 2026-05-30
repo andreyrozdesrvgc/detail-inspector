@@ -9,14 +9,8 @@ export default function Footer() {
     >
       <div className="max-w-[1400px] mx-auto px-6 md:px-10 grid grid-cols-1 md:grid-cols-[1.5fr_1fr_1fr_1.4fr] gap-12">
         <div>
-          <div className="flex items-center gap-3 mb-6">
-            <div className="w-9 h-9 border border-white/40 flex items-center justify-center">
-              <span className="font-display text-base">D</span>
-            </div>
-            <div className="leading-none">
-              <div className="font-display text-sm tracking-[0.04em]">DETAIL INSPECTOR</div>
-              <div className="text-[10px] uppercase tracking-[0.3em] text-[#9a9a9a] mt-0.5">BMW · Москва</div>
-            </div>
+        <div className="flex items-center gap-3 mb-6">
+            <img src="/logo.svg" alt="Detail Inspector" className="h-10 w-auto" />
           </div>
           <p className="text-sm text-[#9a9a9a] leading-relaxed max-w-sm mb-6">
             Премиальная оклейка BMW полиуретановой плёнкой. Защита ЛКП, сохранение стоимости автомобиля на 10+ лет.
@@ -30,7 +24,6 @@ export default function Footer() {
           <div className="eyebrow mb-6">Контакты</div>
           <ul className="space-y-3 text-sm">
             <li><a href={`tel:${BRAND.phoneRaw}`} data-testid="footer-phone" className="text-white hover:text-white/70 transition-colors font-mono">{BRAND.phone}</a></li>
-            <li><a href={BRAND.whatsapp} target="_blank" rel="noreferrer" className="text-white/85 hover:text-white transition-colors">WhatsApp</a></li>
             <li className="text-[#9a9a9a]">{BRAND.address}</li>
           </ul>
         </div>

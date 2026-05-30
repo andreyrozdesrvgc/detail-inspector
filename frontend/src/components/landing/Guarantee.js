@@ -68,7 +68,7 @@ export default function Guarantee() {
               <div className="eyebrow mb-5">Документальная гарантия</div>
               <h2 className="font-display text-[32px] md:text-[52px] leading-[1.02] tracking-[-0.03em] mb-6">
                 Каждый автомобиль <span className="gold-text">сопровождается</span><br />
-                <span className="text-[#9a9a9a]">официальным пакетом документов</span>
+                <span className="text-white">официальным пакетом документов</span>
               </h2>
               <p className="text-[#9a9a9a] text-base md:text-lg leading-relaxed">
                 Мы фиксируем состояние автомобиля, объём работ и гарантийные обязательства документально. Вы точно знаете, что передаёте нам и что получите после завершения работ.

@@ -35,7 +35,7 @@ export default function ReelsGallery() {
         >
           <div className="eyebrow mb-5">Reels-кейсы · BMW</div>
           <h2 className="font-display text-[34px] md:text-[56px] leading-[1.02] tracking-[-0.03em] mb-5">
-            Реальные проекты по защите <span className="gold-text">BMW</span><br /><span className="text-[#9a9a9a]">в формате видео</span>
+            Реальные проекты по защите <span className="gold-text">BMW</span><br /><span className="text-white">в формате видео</span>
           </h2>
           <p className="text-[#9a9a9a] text-base md:text-lg max-w-2xl leading-relaxed">
             Посмотрите, как мы работаем с автомобилями премиум-класса.

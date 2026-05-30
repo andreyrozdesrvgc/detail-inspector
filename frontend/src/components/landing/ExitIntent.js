@@ -62,7 +62,7 @@ export default function ExitIntent() {
             <motion.div key="form" initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="p-10">
               <div className="eyebrow mb-4">Уходите?</div>
               <h3 className="font-display text-2xl md:text-3xl mb-3 leading-tight">
-                Отправьте фото автомобиля<br /><span className="text-[#9a9a9a]">и получите расчёт</span>
+                Отправьте фото автомобиля<br /><span className="text-white">и получите расчёт</span>
               </h3>
               <p className="text-sm text-[#9a9a9a] mb-6 leading-relaxed">
                 Оставьте телефон — пришлём расчёт + подарок: бесплатная оклейка зоны погрузки.

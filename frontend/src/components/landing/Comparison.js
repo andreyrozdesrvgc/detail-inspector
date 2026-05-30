@@ -26,7 +26,7 @@ export default function Comparison() {
           <div className="eyebrow mb-5">Сравнение стандартов</div>
           <h2 className="font-display text-[34px] md:text-[56px] leading-[1.02] tracking-[-0.03em] mb-6">
             Не рискуйте новым автомобилем:<br />
-            <span className="text-[#9a9a9a]">выберите доказуемый протокол безопасности</span>
+            <span className="text-white">выберите доказуемый протокол безопасности</span>
           </h2>
           <p className="text-[#9a9a9a] text-base md:text-lg leading-relaxed max-w-2xl">
             Сравните, чем отличается «гаражная» оклейка от стандартов Detail Inspector.

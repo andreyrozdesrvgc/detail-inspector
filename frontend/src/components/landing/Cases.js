@@ -30,7 +30,7 @@ export default function Cases() {
         >
           <div className="eyebrow mb-6">Кейсы · BMW</div>
           <h2 className="font-display text-[34px] md:text-[56px] leading-[1.02] tracking-[-0.03em]">
-            Реальные работы<br /><span className="text-[#9a9a9a]">«до и после»</span>
+            Реальные работы<br /><span className="text-white">«до и после»</span>
           </h2>
         </motion.div>
 

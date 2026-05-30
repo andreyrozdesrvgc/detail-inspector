@@ -19,7 +19,7 @@ export default function Process() {
           <div className="eyebrow mb-6">Процесс работы</div>
           <h2 className="font-display text-[34px] md:text-[56px] leading-[1.02] tracking-[-0.03em] mb-6">
             <span className="gold-text">Инженерный протокол</span> из 6 этапов:<br />
-            <span className="text-[#9a9a9a]">от аудита под светом до калибровки радаров</span>
+            <span className="text-white">от аудита под светом до калибровки радаров</span>
           </h2>
           <p className="text-[#9a9a9a] text-base md:text-lg max-w-2xl leading-relaxed">
             Каждый этап выполняется узким специалистом. Исключаем риск порезов лака, сломанных клипс и ошибок электроники.

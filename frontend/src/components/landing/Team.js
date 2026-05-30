@@ -23,7 +23,7 @@ export default function Team() {
         >
           <div className="eyebrow mb-5">Команда</div>
           <h2 className="font-display text-[34px] md:text-[56px] leading-[1.02] tracking-[-0.03em]">
-            Ваши <span className="gold-text">BMW</span> в руках<br /><span className="text-[#9a9a9a]">лучших специалистов Москвы</span>
+            Ваши <span className="gold-text">BMW</span> в руках<br /><span className="text-white">лучших специалистов Москвы</span>
           </h2>
         </motion.div>
 

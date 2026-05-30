@@ -44,7 +44,7 @@ export default function FinalCTA() {
           <div className="eyebrow mb-5">Запись на осмотр</div>
           <h2 className="font-display text-[36px] md:text-[64px] leading-[1.0] tracking-[-0.04em] mb-6">
             Готовы защитить ваш&nbsp;<span className="gold-text">BMW</span><br />
-            <span className="text-[#9a9a9a]">по высшему стандарту?</span>
+            <span className="text-white">по высшему стандарту?</span>
           </h2>
           <p className="text-[#9a9a9a] text-base md:text-lg max-w-md leading-relaxed">
             Очный аудит ЛКП занимает 40 минут и проводится бесплатно. После осмотра вы получаете смету до рубля и план работ.

@@ -36,13 +36,7 @@ export default function Header() {
     >
       <div className="max-w-[1400px] mx-auto px-6 md:px-10 h-[72px] flex items-center justify-between">
         <a href="#top" className="flex items-center gap-3" data-testid="logo-link">
-          <div className="w-8 h-8 border border-white/40 flex items-center justify-center">
-            <span className="font-display text-sm">D</span>
-          </div>
-          <div className="leading-none">
-            <div className="font-display text-sm tracking-[0.04em]">DETAIL INSPECTOR</div>
-            <div className="text-[10px] uppercase tracking-[0.3em] text-[#9a9a9a] mt-0.5">BMW · Москва</div>
-          </div>
+          <img src="/logo.svg" alt="Detail Inspector" className="h-9 md:h-10 w-auto" />
         </a>
 
         <nav className="hidden md:flex items-center gap-10" aria-label="Главное меню">

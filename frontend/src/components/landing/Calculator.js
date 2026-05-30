@@ -113,7 +113,7 @@ export default function Calculator() {
           <div className="eyebrow mb-6">Многошаговый расчёт</div>
           <h2 className="font-display text-[34px] md:text-[56px] leading-[1.02] tracking-[-0.03em]">
             Узнайте точную стоимость оклейки<br />
-            <span className="text-[#9a9a9a]">вашего BMW за 60 секунд</span>
+            <span className="text-white">вашего BMW за 60 секунд</span>
           </h2>
         </div>
 

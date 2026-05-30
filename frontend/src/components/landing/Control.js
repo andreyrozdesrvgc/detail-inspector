@@ -20,7 +20,7 @@ export default function Control() {
         >
           <div className="eyebrow mb-5">Контроль работ</div>
           <h2 className="font-display text-[34px] md:text-[56px] leading-[1.02] tracking-[-0.03em]">
-            Следите за работой<br /><span className="text-[#9a9a9a]">над автомобилем онлайн</span>
+            Следите за работой<br /><span className="text-white">над автомобилем онлайн</span>
           </h2>
         </motion.div>
 

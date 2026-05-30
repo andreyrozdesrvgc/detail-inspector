@@ -20,7 +20,7 @@ export default function FAQSection() {
         >
           <div className="eyebrow mb-6">FAQ</div>
           <h2 className="font-display text-[34px] md:text-[52px] leading-[1.02] tracking-[-0.03em]">
-            Частые вопросы<br /><span className="text-[#9a9a9a]">по оклейке BMW</span>
+            Частые вопросы<br /><span className="text-white">по оклейке BMW</span>
           </h2>
 
           {/* CTA block below heading */}

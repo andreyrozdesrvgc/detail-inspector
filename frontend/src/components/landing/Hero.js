@@ -71,17 +71,13 @@ export default function Hero() {
             transition={{ duration: 0.9, ease: [0.16, 1, 0.3, 1], delay: 0.2 }}
             className="max-w-4xl"
           >
-            <div className="eyebrow mb-6 text-white/70" data-testid="hero-overline">
-              SEO Landing · BMW · Москва
-            </div>
-
             <h1
               data-testid="hero-h1"
               className="font-display text-[34px] sm:text-[42px] md:text-[56px] lg:text-[68px] leading-[1.02] tracking-[-0.035em] mb-6"
             >
               Новый BMW за <span className="gold-text">12 млн</span>?
               <br />
-              <span className="text-[#9a9a9a]">Защитите ЛКП</span> от сколов
+              <span className="text-white">Защитите ЛКП</span> от сколов
               <br />
               на 10+ лет
             </h1>

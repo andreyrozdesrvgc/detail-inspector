@@ -29,7 +29,7 @@ export default function PhotoCTA() {
         <div className="eyebrow mb-6 mx-auto" style={{ display: "inline-block" }}>Быстрый расчёт</div>
         <h2 className="font-display text-[34px] md:text-[64px] leading-[1.0] tracking-[-0.04em] mb-8">
           Отправьте фото автомобиля<br />
-          <span className="text-[#9a9a9a]">и получите расчёт за <span className="gold-text">15 минут</span></span>
+          <span className="text-white">и получите расчёт за <span className="gold-text">15 минут</span></span>
         </h2>
         <p className="text-[#9a9a9a] text-base md:text-lg max-w-xl mx-auto mb-10 leading-relaxed">
           Мастер изучит снимки кузова и подготовит предварительную смету до очного осмотра.
