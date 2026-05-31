@@ -78,6 +78,7 @@ class Lead(BaseModel):
     estimated_price: Optional[int] = None
     extra: Optional[Dict[str, Any]] = None
     created_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
+    telegram_sent: Optional[bool] = False
 
 
 class CalculateRequest(BaseModel):
@@ -187,11 +188,16 @@ def _format_lead_message(lead: Lead) -> str:
     return "\n".join(lines)
 
 
-async def send_telegram_notification(lead: Lead) -> None:
-    """Fire-and-forget Telegram notification. Errors are logged, never raised."""
+async def send_telegram_notification(lead: Lead) -> bool:
+    """Fire-and-forget Telegram notification.
+
+    Returns True on success, False on any failure.
+    On success we flip `telegram_sent` in Mongo so the background retry
+    job knows it no longer needs to be re-sent.
+    """
     if not TG_TOKEN or not TG_CHAT_ID:
         logger.warning("Telegram disabled: TELEGRAM_BOT_TOKEN/TELEGRAM_CHAT_ID not set")
-        return
+        return False
 
     text = _format_lead_message(lead)
     url = f"https://api.telegram.org/bot{TG_TOKEN}/sendMessage"
@@ -212,10 +218,17 @@ async def send_telegram_notification(lead: Lead) -> None:
             resp = await http.post(url, json=payload)
             if resp.status_code != 200:
                 logger.error(f"Telegram error {resp.status_code}: {resp.text[:300]}")
-            else:
-                logger.info(f"Telegram OK · lead={lead.id} phone={lead.phone}")
+                return False
+            logger.info(f"Telegram OK · lead={lead.id} phone={lead.phone}")
+            # Mark this lead as delivered so background retry doesn't re-send.
+            try:
+                await db.leads.update_one({"id": lead.id}, {"$set": {"telegram_sent": True}})
+            except Exception:
+                pass
+            return True
     except Exception as e:
         logger.exception(f"Telegram send failed: {e}")
+        return False
 
 
 @api_router.get("/")
@@ -225,10 +238,20 @@ async def root():
 
 @api_router.get("/health")
 async def health():
+    # Check how many leads are awaiting Telegram delivery — a fast warning signal.
+    pending = 0
+    try:
+        pending = await db.leads.count_documents({
+            "$or": [{"telegram_sent": {"$ne": True}}, {"telegram_sent": {"$exists": False}}]
+        })
+    except Exception:
+        pass
     return {
         "status": "ok",
         "ts": datetime.now(timezone.utc).isoformat(),
         "telegram_configured": bool(TG_TOKEN and TG_CHAT_ID),
+        "telegram_proxy": bool(os.environ.get("TELEGRAM_PROXY", "").strip()),
+        "leads_pending_telegram": pending,
     }
 
 
@@ -293,6 +316,37 @@ async def list_leads(limit: int = 100):
     return docs
 
 
+@api_router.post("/leads/resend-pending")
+async def resend_pending_leads(limit: int = 200):
+    """Re-send Telegram notification for all leads that weren't delivered yet.
+
+    Triggered manually after the proxy goes down to recover lost notifications,
+    and also on a background timer (see scheduler below).
+    """
+    cursor = db.leads.find(
+        {"$or": [{"telegram_sent": {"$ne": True}}, {"telegram_sent": {"$exists": False}}]},
+        {"_id": 0},
+    ).sort("created_at", 1).limit(limit)
+    pending = await cursor.to_list(limit)
+
+    sent = 0
+    failed = 0
+    for doc in pending:
+        if isinstance(doc.get("created_at"), str):
+            try:
+                doc["created_at"] = datetime.fromisoformat(doc["created_at"])
+            except Exception:
+                doc["created_at"] = datetime.now(timezone.utc)
+        lead = Lead(**doc)
+        ok = await send_telegram_notification(lead)
+        if ok:
+            sent += 1
+        else:
+            failed += 1
+    logger.info(f"resend-pending: sent={sent} failed={failed} total_pending={len(pending)}")
+    return {"total_pending": len(pending), "sent": sent, "failed": failed}
+
+
 @api_router.post("/telegram/test")
 async def telegram_test():
     """Manual test endpoint to verify Telegram configuration."""
@@ -351,8 +405,38 @@ async def start_scheduler():
         name="Daily Telegram digest (00:00 MSK)",
         replace_existing=True,
     )
+
+    # Safety net — every 5 minutes try to resend any leads that didn't reach
+    # Telegram (e.g. WARP proxy went down or Telegram API rate-limited us).
+    async def _retry_pending():
+        try:
+            cursor = db.leads.find(
+                {"$or": [{"telegram_sent": {"$ne": True}}, {"telegram_sent": {"$exists": False}}]},
+                {"_id": 0},
+            ).sort("created_at", 1).limit(50)
+            pending = await cursor.to_list(50)
+            for doc in pending:
+                if isinstance(doc.get("created_at"), str):
+                    try:
+                        doc["created_at"] = datetime.fromisoformat(doc["created_at"])
+                    except Exception:
+                        doc["created_at"] = datetime.now(timezone.utc)
+                lead = Lead(**doc)
+                await send_telegram_notification(lead)
+        except Exception as e:
+            logger.exception(f"Auto resend-pending failed: {e}")
+
+    scheduler.add_job(
+        _retry_pending,
+        trigger="interval",
+        minutes=5,
+        id="resend-pending-leads",
+        name="Auto retry undelivered Telegram leads (every 5 min)",
+        replace_existing=True,
+    )
+
     scheduler.start()
-    logger.info("Scheduler started — daily digest at 00:00 MSK")
+    logger.info("Scheduler started — daily digest 00:00 MSK + auto-resend every 5 min")
 
 
 @app.on_event("shutdown")

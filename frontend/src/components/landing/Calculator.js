@@ -241,8 +241,8 @@ export default function Calculator() {
                   </p>
                   <div className="border border-white/10 bg-[#0d0d0d] p-6 mb-6">
                     <div className="eyebrow mb-3">Ориентировочная стоимость</div>
-                    <div className="font-display text-4xl md:text-5xl tracking-tight">
-                      <span className="gold-text">от {result.estimated_price.toLocaleString("ru-RU")} ₽</span>
+                    <div className="font-display text-[34px] sm:text-4xl md:text-5xl leading-[1.05] tracking-tight whitespace-nowrap">
+                      <span className="gold-text">от {result.estimated_price.toLocaleString("ru-RU")}&nbsp;₽</span>
                     </div>
                     <div className="mt-3 text-sm text-[#9a9a9a]">{result.summary}</div>
                     <div className="mt-4 pt-4 border-t border-white/5 text-sm text-white/80">
@@ -335,8 +335,8 @@ export default function Calculator() {
 
                   <div className="border border-white/10 bg-[#0d0d0d] p-6 mb-8">
                     <div className="eyebrow mb-3">Ориентировочная стоимость</div>
-                    <div className="font-display text-5xl md:text-6xl tracking-tight">
-                      <span className="gold-text">от {preview.estimated_price.toLocaleString("ru-RU")} ₽</span>
+                    <div className="font-display text-[34px] sm:text-4xl md:text-6xl leading-[1.05] tracking-tight whitespace-nowrap">
+                      <span className="gold-text">от {preview.estimated_price.toLocaleString("ru-RU")}&nbsp;₽</span>
                     </div>
                     <p className="mt-4 pt-4 border-t border-white/5 text-xs text-[#9a9a9a] leading-relaxed">
                       Финальная стоимость согласуется после очного осмотра кузова и фиксируется в заказ-наряде.

@@ -32,13 +32,13 @@ export default function BMWLanding() {
         <Triggers />
         <Comparison />
         <Calculator />
+        <Guarantee />
         <Team />
         <Cases />
         <Process />
         <FinalCTA />
         <Control />
         <PhotoCTA />
-        <Guarantee />
         <ReelsGallery />
         <FAQSection />
         <SeoText />

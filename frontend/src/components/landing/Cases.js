@@ -90,22 +90,14 @@ export default function Cases() {
               >
                 {/* Gallery */}
                 <div className="bg-[#050505]">
-                  <button
-                    onClick={() => setLightbox(true)}
-                    className="block w-full relative group"
-                    data-testid="case-modal-zoom"
-                    aria-label="Увеличить"
-                  >
+                  <div className="block w-full relative">
                     <div className="aspect-[16/10] md:aspect-[16/11] max-h-[32vh] md:max-h-none overflow-hidden bg-[#151515]">
-                      <img src={active.gallery[activeImg]} alt={`${active.model} ${activeImg + 1}`} className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-[1.02]" />
-                    </div>
-                    <div className="absolute top-4 right-4 size-10 bg-black/60 backdrop-blur border border-white/20 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
-                      <ZoomIn className="size-4" />
+                      <img src={active.gallery[activeImg]} alt={`${active.model} ${activeImg + 1}`} className="w-full h-full object-cover" />
                     </div>
                     <div className="absolute bottom-4 left-4 text-[11px] uppercase tracking-[0.2em] text-white/80 font-mono">
                       {String(activeImg + 1).padStart(2, "0")} / {String(active.gallery.length).padStart(2, "0")}
                     </div>
-                  </button>
+                  </div>
                   <div className="grid grid-cols-5 gap-px bg-white/5">
                     {active.gallery.map((g, i) => (
                       <button
@@ -145,10 +137,10 @@ export default function Cases() {
           )}
         </DialogContent>
       </Dialog>
-
-      {/* Fullscreen lightbox */}
-      <Dialog open={lightbox} onOpenChange={setLightbox}>
-        <DialogContent className="bg-[#050505] border-0 text-white max-w-[96vw] w-[96vw] p-0 rounded-sm overflow-hidden">
+    </section>
+  );
+}
+050505] border-0 text-white max-w-[96vw] w-[96vw] p-0 rounded-sm overflow-hidden">
           <DialogTitle className="sr-only">{active ? active.model : "Фото"}</DialogTitle>
           <DialogDescription className="sr-only">Полноразмерный просмотр фотографии кейса.</DialogDescription>
           {active && (

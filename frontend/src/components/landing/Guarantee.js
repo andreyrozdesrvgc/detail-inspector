@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Dialog, DialogContent, DialogTitle, DialogDescription } from "@/components/ui/dialog";
-import { ChevronLeft, ChevronRight, FileText, ShieldCheck, ClipboardList } from "lucide-react";
+import { ChevronLeft, ChevronRight, FileText, ShieldCheck, ClipboardList, X } from "lucide-react";
 import { DOCS } from "@/lib/data";
 import { useLead } from "@/lib/leadContext";
 
@@ -197,9 +197,20 @@ export default function Guarantee() {
       </div>
 
       <Dialog open={open !== null} onOpenChange={(o) => !o && setOpen(null)}>
-        <DialogContent className="bg-[#050505] border border-white/10 text-white max-w-4xl p-0 rounded-sm overflow-hidden">
+        <DialogContent className="bg-[#050505] border border-white/10 text-white max-w-4xl w-[96vw] p-0 rounded-sm overflow-hidden max-h-[90vh] overflow-y-auto">
           <DialogTitle className="sr-only">{open !== null ? DOCS[open].title : "Документ"}</DialogTitle>
           <DialogDescription className="sr-only">Образец официального документа Detail Inspector.</DialogDescription>
+
+          {/* Sticky close button — visible on every screen size */}
+          <button
+            onClick={() => setOpen(null)}
+            data-testid="doc-modal-close"
+            aria-label="Закрыть"
+            className="absolute top-3 right-3 z-10 size-9 rounded-full bg-black/70 border border-white/20 backdrop-blur flex items-center justify-center hover:bg-black active:scale-95 transition-all"
+          >
+            <X className="size-4 text-white" />
+          </button>
+
           <AnimatePresence mode="wait">
             {open !== null && (
               <motion.div
@@ -211,17 +222,17 @@ export default function Guarantee() {
                 className="grid grid-cols-1 md:grid-cols-[1.2fr_1fr]"
                 data-testid="doc-modal"
               >
-                <div className="bg-[#0d0d0d] p-8 md:p-10 flex items-center justify-center min-h-[400px]">
-                  <div className="paper w-full max-w-[360px] aspect-[1/1.41] p-7 flex flex-col">
-                    <div className="flex justify-between mb-5">
-                      <div className="text-[10px] uppercase tracking-[0.2em] text-black/50 font-mono">Detail Inspector · BMW</div>
-                      <div className="text-[10px] font-mono text-black/40">№ {String(open + 1).padStart(4, "0")}/25</div>
+                <div className="bg-[#0d0d0d] p-5 md:p-10 flex items-center justify-center min-h-[260px] md:min-h-[400px]">
+                  <div className="paper w-full max-w-[280px] md:max-w-[360px] aspect-[1/1.41] p-5 md:p-7 flex flex-col">
+                    <div className="flex justify-between mb-3 md:mb-5">
+                      <div className="text-[9px] md:text-[10px] uppercase tracking-[0.2em] text-black/50 font-mono">Detail Inspector · BMW</div>
+                      <div className="text-[9px] md:text-[10px] font-mono text-black/40">№ {String(open + 1).padStart(4, "0")}/25</div>
                     </div>
-                    <div className="h-px bg-black/15 mb-5" />
-                    <div className="text-[10px] uppercase tracking-[0.18em] text-black/50 mb-1">Документ</div>
-                    <h4 className="font-display text-xl md:text-2xl text-black leading-tight mb-5">{DOCS[open].title}</h4>
-                    <div className="h-px bg-black/10 mb-4" />
-                    <ul className="space-y-2 text-xs text-black/75 flex-1">
+                    <div className="h-px bg-black/15 mb-3 md:mb-5" />
+                    <div className="text-[9px] md:text-[10px] uppercase tracking-[0.18em] text-black/50 mb-1">Документ</div>
+                    <h4 className="font-display text-base md:text-2xl text-black leading-tight mb-3 md:mb-5">{DOCS[open].title}</h4>
+                    <div className="h-px bg-black/10 mb-3 md:mb-4" />
+                    <ul className="space-y-1.5 md:space-y-2 text-[10px] md:text-xs text-black/75 flex-1">
                       {DOCS[open].fields.map((f, i) => (
                         <li key={i} className="flex gap-2">
                           <span className="text-black/40 font-mono">0{i + 1}</span>
@@ -229,17 +240,17 @@ export default function Guarantee() {
                         </li>
                       ))}
                     </ul>
-                    <div className="mt-auto pt-4 border-t border-black/10 flex items-end justify-between text-[9px] text-black/40 font-mono">
+                    <div className="mt-auto pt-3 md:pt-4 border-t border-black/10 flex items-end justify-between text-[8px] md:text-[9px] text-black/40 font-mono">
                       <span>Стр. 1 из 3 · BMW VIN</span>
                       <span>__________</span>
                     </div>
                   </div>
                 </div>
-                <div className="p-8 md:p-10 relative">
-                  <div className="eyebrow mb-4">Документ {open + 1} из {DOCS.length}</div>
-                  <h3 className="font-display text-2xl md:text-3xl mb-5 leading-tight">{DOCS[open].title}</h3>
-                  <p className="text-sm text-[#9a9a9a] leading-relaxed mb-6">{DOCS[open].desc}</p>
-                  <div className="border-t border-white/10 pt-5 space-y-2 mb-8">
+                <div className="p-6 md:p-10 relative">
+                  <div className="eyebrow mb-3 md:mb-4">Документ {open + 1} из {DOCS.length}</div>
+                  <h3 className="font-display text-xl md:text-3xl mb-3 md:mb-5 leading-tight">{DOCS[open].title}</h3>
+                  <p className="text-sm text-[#9a9a9a] leading-relaxed mb-5 md:mb-6">{DOCS[open].desc}</p>
+                  <div className="border-t border-white/10 pt-4 md:pt-5 space-y-2 mb-6 md:mb-8">
                     {DOCS[open].fields.map((f, i) => (
                       <div key={i} className="text-sm text-white/80 flex gap-3">
                         <span className="font-mono text-[#9a9a9a]">0{i + 1}</span>
@@ -247,8 +258,8 @@ export default function Guarantee() {
                       </div>
                     ))}
                   </div>
-                  <div className="flex items-center justify-between border-t border-white/10 pt-5">
-                    <div className="flex items-center gap-2">
+                  <div className="flex items-center justify-between border-t border-white/10 pt-5 gap-3">
+                    <div className="flex items-center gap-2 shrink-0">
                       <button
                         onClick={prev}
                         data-testid="doc-modal-prev"
@@ -272,7 +283,7 @@ export default function Guarantee() {
                         target="_blank"
                         rel="noopener noreferrer"
                         data-testid="doc-modal-pdf"
-                        className="btn-gold inline-flex items-center gap-2 px-5 py-2.5 uppercase tracking-[0.18em] text-[10px] font-semibold rounded-sm"
+                        className="btn-gold inline-flex items-center justify-center gap-2 px-4 md:px-5 py-2.5 uppercase tracking-[0.18em] text-[10px] font-semibold rounded-sm"
                       >
                         <FileText className="size-3.5" />
                         <span>Открыть PDF</span>
