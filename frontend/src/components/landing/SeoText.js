@@ -1,5 +1,5 @@
 import { motion } from "framer-motion";
-import { SEO_TEXT } from "@/lib/data";
+import { SEO_TEXT, BRAND } from "@/lib/data";
 import { useLead } from "@/lib/leadContext";
 
 export default function SeoText() {
@@ -20,7 +20,7 @@ export default function SeoText() {
         >
           <div className="eyebrow mb-6">Защита BMW в Москве</div>
           <h2 className="font-display text-[28px] md:text-[42px] leading-[1.05] tracking-[-0.03em]">
-            Полиуретановая плёнка PPF для BMW: что нужно знать владельцу
+            <span className="gold-text">Полиуретановая плёнка</span> PPF для BMW: что нужно знать владельцу
           </h2>
         </motion.div>
         <div className="space-y-5 text-[#9a9a9a] text-[15px] md:text-base leading-[1.75]">
@@ -57,13 +57,13 @@ export default function SeoText() {
             >
               <span>Запросить смету</span>
             </button>
-            <button
-              onClick={() => openLead({ source: "seo-callback", note: "Заказать звонок" })}
+            <a
+              href={`tel:${BRAND.phoneRaw}`}
               data-testid="seo-cta-callback"
-              className="btn-ghost px-8 py-4 uppercase tracking-[0.18em] text-[11px] font-medium"
+              className="btn-ghost inline-block px-8 py-4 uppercase tracking-[0.18em] text-[11px] font-medium"
             >
               <span>Заказать звонок</span>
-            </button>
+            </a>
           </div>
         </motion.div>
       </div>

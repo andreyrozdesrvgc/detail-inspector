@@ -1,4 +1,5 @@
 import { motion } from "framer-motion";
+import { BRAND } from "@/lib/data";
 import { useLead } from "@/lib/leadContext";
 import { Camera } from "lucide-react";
 
@@ -11,7 +12,7 @@ export default function PhotoCTA() {
     >
       <div className="absolute inset-0 opacity-30">
         <img
-          src="https://images.pexels.com/photos/36021355/pexels-photo-36021355.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=900&w=1600"
+          src="/cases/pexels-3.jpg"
           alt="Процесс PPF"
           loading="lazy"
           className="w-full h-full object-cover grayscale"
@@ -42,13 +43,13 @@ export default function PhotoCTA() {
           >
             <span className="inline-flex items-center gap-2"><Camera className="size-4" /> Отправить фото</span>
           </button>
-          <button
-            onClick={() => openLead({ source: "photo-cta-call", note: "Заказать звонок" })}
+          <a
+            href={`tel:${BRAND.phoneRaw}`}
             data-testid="photo-cta-call"
             className="btn-ghost px-8 py-4 uppercase tracking-[0.18em] text-xs font-medium"
           >
             <span>Заказать звонок</span>
-          </button>
+          </a>
         </div>
       </motion.div>
     </section>

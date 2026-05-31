@@ -17,16 +17,16 @@ import { Play, X } from "lucide-react";
  */
 
 const REELS = [
-  { id: 1, label: "Рассчитать проект защиты BMW", video: "/reels/1.mp4", poster: "/reels/1.jpg", fallback: "https://images.unsplash.com/photo-1563826773-1e2b4b2cde42?w=900&q=85&auto=format&fit=crop&h=1600" },
-  { id: 2, label: "Получить персональную смету", video: "/reels/2.mp4", poster: "/reels/2.jpg", fallback: "https://images.unsplash.com/photo-1555215695-3004980ad54e?w=900&q=85&auto=format&fit=crop&h=1600" },
-  { id: 3, label: "Узнать стоимость оклейки", video: "/reels/3.mp4", poster: "/reels/3.jpg", fallback: "https://images.pexels.com/photos/36021355/pexels-photo-36021355.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=1600&w=900" },
-  { id: 4, label: "Оценить стоимость вашего BMW", video: "/reels/4.mp4", poster: "/reels/4.jpg", fallback: "https://images.unsplash.com/photo-1614162692292-7ac56d7f7f1e?w=900&q=85&auto=format&fit=crop&h=1600" },
-  { id: 5, label: "Рассчитать защиту кузова", video: "/reels/5.mp4", poster: "/reels/5.jpg", fallback: "https://images.unsplash.com/photo-1610647752706-3bb12232b3ab?w=900&q=85&auto=format&fit=crop&h=1600" },
-  { id: 6, label: "Получить консультацию мастера", video: "/reels/6.mp4", poster: "/reels/6.jpg", fallback: "https://images.pexels.com/photos/10126657/pexels-photo-10126657.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=1600&w=900" },
-  { id: 7, label: "Узнать цену для вашего авто", video: "/reels/7.mp4", poster: "/reels/7.jpg", fallback: "https://images.unsplash.com/photo-1617531653332-bd46c24f2068?w=900&q=85&auto=format&fit=crop&h=1600" },
-  { id: 8, label: "Заказать расчёт проекта", video: "/reels/8.mp4", poster: "/reels/8.jpg", fallback: "https://images.unsplash.com/photo-1607853554439-0069ec0f29b6?w=900&q=85&auto=format&fit=crop&h=1600" },
-  { id: 9, label: "Получить индивидуальное предложение", video: "/reels/9.mp4", poster: "/reels/9.jpg", fallback: "https://images.pexels.com/photos/6872174/pexels-photo-6872174.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=1600&w=900" },
-  { id: 10, label: "Рассчитать стоимость за 15 минут", video: "/reels/10.mp4", poster: "/reels/10.jpg", fallback: "https://images.pexels.com/photos/20051458/pexels-photo-20051458.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=1600&w=900" },
+  { id: 1, label: "Рассчитать проект защиты BMW", video: "/reels/1.mp4", poster: "/reels/1.jpg", fallback: "/reels/reel-1.jpg" },
+  { id: 2, label: "Получить персональную смету", video: "/reels/2.mp4", poster: "/reels/2.jpg", fallback: "/reels/reel-2.jpg" },
+  { id: 3, label: "Узнать стоимость оклейки", video: "/reels/3.mp4", poster: "/reels/3.jpg", fallback: "/reels/reel-3.jpg" },
+  { id: 4, label: "Оценить стоимость вашего BMW", video: "/reels/4.mp4", poster: "/reels/4.jpg", fallback: "/reels/reel-4.jpg" },
+  { id: 5, label: "Рассчитать защиту кузова", video: "/reels/5.mp4", poster: "/reels/5.jpg", fallback: "/reels/reel-5.jpg" },
+  { id: 6, label: "Получить консультацию мастера", video: "/reels/6.mp4", poster: "/reels/6.jpg", fallback: "/reels/reel-6.jpg" },
+  { id: 7, label: "Узнать цену для вашего авто", video: "/reels/7.mp4", poster: "/reels/7.jpg", fallback: "/reels/reel-7.jpg" },
+  { id: 8, label: "Заказать расчёт проекта", video: "/reels/8.mp4", poster: "/reels/8.jpg", fallback: "/reels/reel-8.jpg" },
+  { id: 9, label: "Получить индивидуальное предложение", video: "/reels/9.mp4", poster: "/reels/9.jpg", fallback: "/reels/reel-9.jpg" },
+  { id: 10, label: "Рассчитать стоимость за 15 минут", video: "/reels/10.mp4", poster: "/reels/10.jpg", fallback: "/reels/reel-10.jpg" },
 ];
 
 // Probe a media URL (HEAD) — true if reachable (status 2xx).
@@ -74,11 +74,11 @@ function ReelCard({ reel, onOpen, onLead }) {
   return (
     <div className="shrink-0 w-[260px] md:w-[300px] snap-center" data-testid={`reel-${reel.id}`}>
       <button
-        onClick={() => (hasVideo ? onOpen(reel) : onLead(reel))}
+        onClick={() => onOpen({ ...reel, hasVideo })}
         onMouseEnter={handleHoverPlay}
         onMouseLeave={handleHoverStop}
         className="relative aspect-[9/16] w-full overflow-hidden bg-[#151515] rounded-[20px] border border-white/10 group block"
-        aria-label={hasVideo ? "Открыть видео" : reel.label}
+        aria-label="Открыть видео"
       >
         {hasVideo ? (
           <video
@@ -179,21 +179,29 @@ export default function ReelsGallery() {
         </div>
       </div>
 
-      {/* Fullscreen video player */}
+      {/* Fullscreen video / poster viewer */}
       <Dialog open={!!openReel} onOpenChange={(v) => !v && setOpenReel(null)}>
         <DialogContent className="bg-black border border-white/10 text-white max-w-[480px] w-[92vw] p-0 rounded-2xl overflow-hidden">
           <DialogTitle className="sr-only">Reel · {openReel?.id}</DialogTitle>
           <DialogDescription className="sr-only">Видео-кейс работы Detail Inspector.</DialogDescription>
           {openReel && (
             <div className="relative aspect-[9/16] bg-black">
-              <video
-                src={openReel.video}
-                poster={openReel.poster}
-                controls
-                autoPlay
-                playsInline
-                className="w-full h-full object-contain bg-black"
-              />
+              {openReel.hasVideo ? (
+                <video
+                  src={openReel.video}
+                  poster={openReel.poster}
+                  controls
+                  autoPlay
+                  playsInline
+                  className="w-full h-full object-contain bg-black"
+                />
+              ) : (
+                <img
+                  src={openReel.fallback}
+                  alt={`Reel ${openReel.id}`}
+                  className="w-full h-full object-cover"
+                />
+              )}
               <button
                 onClick={() => setOpenReel(null)}
                 className="absolute top-3 right-3 size-9 rounded-full bg-black/70 border border-white/20 backdrop-blur flex items-center justify-center hover:bg-black"

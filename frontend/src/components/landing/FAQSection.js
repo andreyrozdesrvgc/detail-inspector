@@ -1,11 +1,9 @@
 import { motion } from "framer-motion";
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
-import { FAQ_ITEMS } from "@/lib/data";
-import { useLead } from "@/lib/leadContext";
+import { FAQ_ITEMS, BRAND } from "@/lib/data";
 import { PhoneCall } from "lucide-react";
 
 export default function FAQSection() {
-  const { openLead } = useLead();
   return (
     <section
       data-testid="faq-section"
@@ -38,13 +36,13 @@ export default function FAQSection() {
             <p className="text-sm text-[#9a9a9a] leading-relaxed mb-5">
               Задайте вопрос мастеру напрямую — отвечаем по технологиям, материалам и срокам без скриптов.
             </p>
-            <button
-              onClick={() => openLead({ source: "faq", note: "Вопрос по FAQ" })}
+            <a
+              href={`tel:${BRAND.phoneRaw}`}
               data-testid="faq-cta-btn"
-              className="btn-gold w-full sm:w-auto px-7 py-3.5 uppercase tracking-[0.2em] text-[11px] font-semibold rounded-sm"
+              className="btn-gold w-full sm:w-auto inline-block px-7 py-3.5 uppercase tracking-[0.2em] text-[11px] font-semibold rounded-sm text-center"
             >
               <span>Заказать звонок</span>
-            </button>
+            </a>
           </motion.div>
         </motion.div>
 
