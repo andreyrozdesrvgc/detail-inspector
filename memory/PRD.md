@@ -1,84 +1,91 @@
 # Detail Inspector — Премиум-лендинг для оклейки BMW
 
 ## Original Problem Statement (RU)
-Создать полноценный одностраничный лендинг для премиум-студии оклейки автомобилей полиуретановой плёнкой под брендом **Detail Inspector**. Целевая аудитория — владельцы автомобилей от 5 млн рублей (BMW). Тёмный, дорогой стиль, премиальные шрифты + золотые переливающиеся акценты. Лендинг включает Hero, Триггеры, Таблицу сравнений, Многошаговый квиз-калькулятор, Карточки команды, Галерею кейсов Reels-формата, Процесс работы, Блок гарантий, FAQ, SEO-текст. Развертывание на VPS (Ubuntu).
+Создать полноценный одностраничный лендинг для премиум-студии оклейки BMW (5М+ ₽). Тёмный, дорогой стиль + золотые акценты. Hero, Триггеры, Сравнение, Квиз-калькулятор, Команда, Кейсы, Reels, Процесс, Гарантии, FAQ, SEO. Развёртывание на Selectel VPS Ubuntu 24.04.
 
 ## Tech Stack
-- **Frontend**: React SPA (CRA) + Tailwind CSS + Framer Motion + shadcn/ui + sonner toasts
-- **Backend**: FastAPI + Motor (MongoDB async) + httpx
-- **DB**: MongoDB (collections: `leads`, `status_checks`)
-- **Deployment**: Selectel VPS (Ubuntu 24.04), Nginx + Gunicorn + Systemd
+- **Frontend**: React SPA (CRA) + Tailwind + Framer Motion + shadcn/ui + sonner
+- **Backend**: FastAPI + Motor (Mongo async) + httpx + APScheduler
+- **DB**: MongoDB (`leads`, `status_checks`)
+- **Integrations**: Telegram Bot API, Yandex Metrika (counter + API)
+- **Deploy**: Selectel VPS, Nginx + Gunicorn + systemd
 
 ## Key Files
 ```
 /app/
 ├── backend/
-│   ├── server.py              # FastAPI + Telegram notifications + pricing engine
+│   ├── server.py              # FastAPI + Telegram + APScheduler hooks
+│   ├── digest.py              # Daily Telegram digest + Yandex Metrika client
 │   ├── requirements.txt
-│   └── .env                   # MONGO_URL, DB_NAME, TELEGRAM_BOT_TOKEN, TELEGRAM_CHAT_ID
+│   └── .env                   # MONGO_URL, DB_NAME, TELEGRAM_*, YANDEX_METRIKA_*
 ├── frontend/
 │   ├── public/
-│   │   ├── logo.png
-│   │   ├── favicon.ico, favicon-*.png, apple-touch-icon.png, android-chrome-*.png
-│   │   ├── site.webmanifest
-│   │   ├── reels/             # ← User uploads videos here: 1.mp4, 2.mp4, ...
-│   │   └── hero/1.webp, hero/2.webp
+│   │   ├── logo.png, favicon.ico + full set, site.webmanifest
+│   │   ├── reels/             # User uploads videos: 1.mp4...10.mp4
+│   │   ├── hero/1.webp, 2.webp
+│   │   └── index.html         # Yandex Metrika counter embedded
 │   └── src/
-│       ├── App.css, index.css # Gold gradient animations (goldShimmer, btn-gold, etc.)
-│       ├── lib/data.js, lib/api.js, lib/leadContext.js
-│       └── components/landing/
-│           ├── Header.js, Hero.js, Triggers.js, Comparison.js,
-│           ├── Calculator.js (client-side pricing, no network failures),
-│           ├── Team.js, Cases.js, ReelsGallery.js (video-aware),
-│           ├── Process.js, Guarantee.js, FAQSection.js, Footer.js,
-│           ├── LeadDialog.js, ExitIntent.js, MobileCTA.js
+│       ├── App.js             # captureUtm() on mount
+│       ├── lib/
+│       │   ├── api.js         # buildLeadExtra merges UTM into every lead
+│       │   ├── utm.js         # UTM capture + persistence + source aliasing
+│       │   ├── data.js, leadContext.js
+│       └── components/landing/  # 16+ section components
 ```
 
-## Key API endpoints
+## Key API Endpoints
 - `GET /api/health` → `{status, ts, telegram_configured}`
-- `POST /api/calculate` → returns `{estimated_price, price_label, gift, summary}`
-- `POST /api/leads` → saves lead + fires Telegram notification in background
-- `GET /api/leads?limit=N` → list of leads
-- `POST /api/telegram/test` → sends a test message to Telegram
+- `POST /api/calculate` → `{estimated_price, price_label, gift, summary}`
+- `POST /api/leads` → save + Telegram notify in background, returns `Lead`
+- `GET /api/leads?limit=N`
+- `POST /api/telegram/test` → single test message
+- `POST /api/digest/send-now` → manual daily digest trigger (for testing)
 
-## DB Schema
-- `leads`: `{id, name, phone, bmw_model, task, condition, source, note, estimated_price, extra, created_at}`
+## Scheduler
+- **AsyncIOScheduler** (APScheduler) inside FastAPI
+- Cron: every day at **00:00 Europe/Moscow**
+- Job: `build_and_send_daily_digest(db)` from `digest.py`
 
-## 3rd Party Integrations
-- **Telegram Bot API** (sendMessage via httpx) — fire-and-forget background task
-  - Token & chat ID in `/app/backend/.env`
-  - HTML-formatted message with full quiz data, source, price
+## Daily Digest Contents (HTML to Telegram)
+1. Total leads today (MSK calendar day)
+2. Average estimated price
+3. Source breakdown (UTM, with progress-bars) — `ВК Реклама`, `Авито`, `Яндекс Директ`, `Прямой заход`, etc.
+4. On-site section breakdown (Hero, Калькулятор, Кейсы, Команда, Reels…)
+5. Top BMW models requested
+6. **Yandex.Metrika** (visits, users, pageviews, bounce, avg duration, conversion %)
+7. Top Metrika traffic sources
 
-## Completed (Feb 2026 — session 2)
-- ✅ Full landing UI (all sections, gold gradient accents)
-- ✅ Pricing engine (deterministic, mirrored client+server)
-- ✅ Lead form with multi-step flow
-- ✅ Manual VPS deployment instructions for user (Selectel)
-- ✅ **Comparison block**: gold "протокол безопасности" header text, button centered on mobile (`w-full max-w-sm md:w-auto`)
-- ✅ **Calculator**: smoother step transitions (900ms + 1100ms), bug fix (client-side computation, no network failure path), full quiz data (`extra`) sent to backend
-- ✅ **Team block**: compact mobile sizing (smaller paddings, text)
-- ✅ **Cases modal**: smaller first photo on mobile (`aspect-[16/10] max-h-[32vh]`), gold CTA button confirmed
-- ✅ **Reels gallery**: now supports actual videos at `/public/reels/<id>.mp4` with hover-play preview + lightbox player; falls back to "Видео скоро" badge if file is missing
-- ✅ **Footer map**: Yandex Maps iframe with explicit pin at "Москва, 1-й Дорожный проезд, 5А, 117545", click-through link to full map
-- ✅ **Telegram integration**: Each lead form submission (Hero, LeadDialog, Calculator, Cases, Team, Reels, Comparison) sends a formatted HTML notification with all collected data (name, phone, BMW model, quiz answers, source, price) to the configured chat
-- ✅ **Favicons**: Full set generated from logo (16/32/48 .ico+png, 180 apple-touch, 192/512 android-chrome) + site.webmanifest
-- ✅ **Logo size**: reduced in header (`h-5 md:h-6`, was `h-7 md:h-9`)
+## UTM Flow
+1. URL like `/?utm_source=vk_ads&utm_campaign=winter` → `captureUtm()` in `App.js` parses & persists to `localStorage.di_utm_v1`
+2. Returning visits keep the original source until a fresh utm appears
+3. Every `submitLead()` calls `buildLeadExtra()` which merges UTM keys into `extra`
+4. Backend stores `extra` in Mongo and shows in instant Telegram notification + daily digest
 
-## Pending / Backlog
-- P1 — Replace stub URLs (`#`) for Политика конфиденциальности / Договор оферты / Реквизиты
-- P1 — User to upload actual videos to `/public/reels/1.mp4` … `10.mp4` (folder created, autodetection ready)
-- P2 — CallTouch coltracking integration on phone numbers + "Заказать звонок" buttons (user mentioned)
-- P3 — Optional: restore Nginx gzip/cache-control blocks on VPS
-- P3 — PRD originally requested Next.js SSR; currently using CRA SPA (no user complaint)
+## Yandex Metrika
+- **Counter ID**: 109538562 (embedded in `index.html`)
+- **API token**: stored in `.env` as `YANDEX_METRIKA_OAUTH_TOKEN`
+- Current token `274b246a5b3248dc870a018ff8e42138` is **INVALID** — user needs to redo OAuth flow with proper authorize URL and provide a real `y0_AgAAAA...` token
 
-## Credentials & Config
-- `TELEGRAM_BOT_TOKEN`: stored in `/app/backend/.env`
-- `TELEGRAM_CHAT_ID`: `7505435012` (single recipient)
-- VPS: Selectel Ubuntu 24.04, Nginx + Gunicorn + systemd (user-managed)
+## Recent Session Completed
+- ✅ Yandex Metrika counter installed (auto-tracks pageviews/clicks/webvisor)
+- ✅ UTM tracking lib (frontend) — `vk_ads → ВК Реклама`, `direct → Яндекс Директ`, etc.
+- ✅ Daily digest scheduler at 00:00 MSK, beautifully formatted in Telegram
+- ✅ Manual digest endpoint `POST /api/digest/send-now` for testing
+- ✅ Yandex Metrika API client (gracefully degrades if token invalid/missing)
+- ✅ Dark map in footer (CSS invert + hue-rotate filter, looks premium)
+- ✅ `apscheduler` + `pytz` + `tzlocal` added to requirements.txt
+- ✅ Removed `emergentintegrations` from requirements.txt (was blocking VPS deploy)
 
-## Health Check
-- ✅ Backend: `/api/health` → 200, `telegram_configured: true`
-- ✅ Telegram test message delivered (verified via `/api/telegram/test`)
-- ✅ End-to-end lead form (curl) → 200, message in Telegram
-- ✅ Calculator quiz: client-side computation, no network errors
-- ✅ Mobile responsiveness verified via Playwright (390x844)
+## Known Issues / Pending
+- 🟡 **Yandex Metrika token is invalid** — user copied app secret instead of OAuth token. Awaiting correct token via `https://oauth.yandex.ru/authorize?response_type=token&client_id=<ClientID>` flow.
+- 🟡 **VPS .env** — user needs to add `TELEGRAM_BOT_TOKEN`, `TELEGRAM_CHAT_ID`, `YANDEX_METRIKA_OAUTH_TOKEN`, `YANDEX_METRIKA_COUNTER_ID`, `DAILY_DIGEST_ENABLED=true` to backend .env on VPS.
+- 🟡 Stub URLs `#` in Footer for Политика/Оферта/Реквизиты.
+- 🟡 Reels videos folder is empty — user to upload `/public/reels/1.mp4`..`10.mp4`.
+
+## Future / Backlog
+- CallTouch coltracking integration
+- Replace placeholder PDF URLs in Footer
+- (Optional) Next.js SSR migration for SEO
+
+## Credentials
+- See `/app/memory/test_credentials.md` for sensitive values (Telegram bot token, Metrika)

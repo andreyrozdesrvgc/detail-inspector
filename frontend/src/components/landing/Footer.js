@@ -55,7 +55,10 @@ export default function Footer() {
               loading="lazy"
               allowFullScreen
               className="w-full h-full"
-              style={{ border: 0, filter: "grayscale(0.4) contrast(1.05)" }}
+              style={{
+                border: 0,
+                filter: "invert(0.92) hue-rotate(180deg) saturate(0.4) brightness(0.92) contrast(1.1)",
+              }}
             />
             <a
               href="https://yandex.ru/maps/?text=Москва%2C%201-й%20Дорожный%20проезд%2C%205А"

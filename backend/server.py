@@ -2,6 +2,8 @@ from fastapi import FastAPI, APIRouter, HTTPException, BackgroundTasks
 from dotenv import load_dotenv
 from starlette.middleware.cors import CORSMiddleware
 from motor.motor_asyncio import AsyncIOMotorClient
+from apscheduler.schedulers.asyncio import AsyncIOScheduler
+from apscheduler.triggers.cron import CronTrigger
 import os
 import logging
 import html
@@ -11,6 +13,8 @@ from pydantic import BaseModel, Field, ConfigDict
 from typing import List, Optional, Dict, Any
 import uuid
 from datetime import datetime, timezone
+
+from digest import build_and_send_daily_digest, MOSCOW_TZ
 
 
 ROOT_DIR = Path(__file__).parent
@@ -297,6 +301,13 @@ async def telegram_test():
     return {"ok": True}
 
 
+@api_router.post("/digest/send-now")
+async def digest_send_now():
+    """Manual trigger for the daily digest. Useful for testing & one-off reports."""
+    ok = await build_and_send_daily_digest(db)
+    return {"ok": ok}
+
+
 app.include_router(api_router)
 
 app.add_middleware(
@@ -307,6 +318,35 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
+
+# =========================
+# Scheduler — daily digest at 00:00 MSK
+# =========================
+scheduler: Optional[AsyncIOScheduler] = None
+
+
+@app.on_event("startup")
+async def start_scheduler():
+    global scheduler
+    if os.environ.get("DAILY_DIGEST_ENABLED", "true").lower() not in ("1", "true", "yes"):
+        logger.info("Daily digest scheduler disabled via env")
+        return
+    scheduler = AsyncIOScheduler(timezone=MOSCOW_TZ)
+    # Fire at 00:00 Moscow time every day. This summarises the day that just ended.
+    scheduler.add_job(
+        lambda: build_and_send_daily_digest(db),
+        trigger=CronTrigger(hour=0, minute=0, timezone=MOSCOW_TZ),
+        id="daily-digest",
+        name="Daily Telegram digest (00:00 MSK)",
+        replace_existing=True,
+    )
+    scheduler.start()
+    logger.info("Scheduler started — daily digest at 00:00 MSK")
+
+
 @app.on_event("shutdown")
 async def shutdown_db_client():
+    global scheduler
+    if scheduler:
+        scheduler.shutdown(wait=False)
     client.close()
