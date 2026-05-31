@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Dialog, DialogContent, DialogTitle, DialogDescription } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
@@ -16,6 +16,7 @@ export default function LeadDialog() {
   const [model, setModel] = useState("");
   const [errors, setErrors] = useState({});
   const [loading, setLoading] = useState(false);
+  const phoneRef = useRef(null);
 
   useEffect(() => {
     if (open) {
@@ -27,19 +28,43 @@ export default function LeadDialog() {
     }
   }, [open, prefill]);
 
-  const onPhoneChange = (e) => setPhone(formatPhone(e.target.value));
-  const onPhoneFocus = () => { if (!phone || phone === "") setPhone("+7 "); };
+  // Force caret to end of phone input so the user always types AFTER "+7 ".
+  const moveCaretToEnd = () => {
+    const el = phoneRef.current;
+    if (!el) return;
+    requestAnimationFrame(() => {
+      const len = el.value.length;
+      try { el.setSelectionRange(len, len); } catch { /* ignore */ }
+    });
+  };
+
+  const onPhoneChange = (e) => {
+    setPhone(formatPhone(e.target.value));
+    moveCaretToEnd();
+  };
+  const onPhoneFocus = () => {
+    if (!phone || phone === "") setPhone("+7 ");
+    moveCaretToEnd();
+  };
+  const onPhoneClick = () => moveCaretToEnd();
+  const onPhoneKeyUp = () => moveCaretToEnd();
   const onPhoneKeyDown = (e) => {
     // Prevent deleting the "+7 " prefix entirely.
     if ((e.key === "Backspace" || e.key === "Delete") && phone.replace(/\D/g, "").length <= 1) {
       e.preventDefault();
+    }
+    // Block Home / arrow-left into the "+7 " zone — keep cursor at end.
+    if (e.key === "Home" || e.key === "ArrowLeft" || e.key === "ArrowUp") {
+      e.preventDefault();
+      moveCaretToEnd();
     }
   };
 
   const validate = () => {
     const errs = {};
     if (!isValidRuPhone(phone)) errs.phone = "Введите номер РФ: +7 и ещё 10 цифр";
-    if (!model || model.trim().length < 2) errs.model = "Укажите модель BMW";
+    // Free-form BMW model — accept any non-empty value (latin, cyrillic, digits).
+    if (!model || model.trim().length < 1) errs.model = "Укажите модель BMW";
     setErrors(errs);
     return Object.keys(errs).length === 0;
   };
@@ -97,18 +122,25 @@ export default function LeadDialog() {
                   placeholder="Имя"
                   value={name}
                   onChange={(e) => setName(e.target.value)}
+                  spellCheck={false}
+                  autoComplete="name"
                   className="bg-[#151515] border-white/10 text-white h-12 rounded-sm"
                 />
                 <div>
                   <Input
+                    ref={phoneRef}
                     data-testid="lead-phone-input"
                     placeholder="+7 (___) ___-__-__"
                     value={phone}
                     onChange={onPhoneChange}
                     onFocus={onPhoneFocus}
+                    onClick={onPhoneClick}
+                    onKeyUp={onPhoneKeyUp}
                     onKeyDown={onPhoneKeyDown}
                     type="tel"
                     inputMode="tel"
+                    autoComplete="tel"
+                    spellCheck={false}
                     required
                     aria-invalid={!!errors.phone}
                     className={`bg-[#151515] text-white h-12 rounded-sm ${errors.phone ? "border-red-500/60" : "border-white/10"}`}
@@ -121,6 +153,8 @@ export default function LeadDialog() {
                     placeholder="Модель BMW (например, X5 G05) *"
                     value={model}
                     onChange={(e) => setModel(e.target.value)}
+                    spellCheck={false}
+                    autoComplete="off"
                     required
                     aria-invalid={!!errors.model}
                     className={`bg-[#151515] text-white h-12 rounded-sm ${errors.model ? "border-red-500/60" : "border-white/10"}`}

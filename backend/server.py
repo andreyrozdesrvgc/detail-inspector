@@ -271,8 +271,8 @@ async def create_lead(payload: LeadCreate, background: BackgroundTasks):
     raw_digits = ''.join(ch for ch in (payload.phone or '') if ch.isdigit())
     if len(raw_digits) < 10:
         raise HTTPException(status_code=400, detail="Phone is required")
-    # BMW model is mandatory for every lead.
-    if not payload.bmw_model or len(payload.bmw_model.strip()) < 2:
+    # BMW model is mandatory (free-form: latin, cyrillic, digits — anything non-empty).
+    if not payload.bmw_model or len(payload.bmw_model.strip()) < 1:
         raise HTTPException(status_code=400, detail="BMW model is required")
     lead = Lead(**payload.model_dump())
     doc = lead.model_dump()

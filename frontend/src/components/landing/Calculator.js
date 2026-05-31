@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useRef, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { ArrowLeft, ArrowRight, Check, Loader2, Gift } from "lucide-react";
 import { Input } from "@/components/ui/input";
@@ -61,6 +61,17 @@ export default function Calculator() {
   const [preview, setPreview] = useState(null);
   const [result, setResult] = useState(null);
   const [loading, setLoading] = useState(false);
+  const phoneRef = useRef(null);
+
+  // Force caret to end so user always types after "+7 ".
+  const moveCaretToEnd = () => {
+    const el = phoneRef.current;
+    if (!el) return;
+    requestAnimationFrame(() => {
+      const len = el.value.length;
+      try { el.setSelectionRange(len, len); } catch { /* ignore */ }
+    });
+  };
 
   // Map phase -> step indicator
   const indicatorIdx =
@@ -273,16 +284,22 @@ export default function Calculator() {
                     />
                     <div>
                       <Input
+                        ref={phoneRef}
                         data-testid="calc-phone-input"
                         placeholder="+7 (___) ___-__-__"
                         value={phone}
-                        onChange={(e) => { setPhone(formatPhone(e.target.value)); if (phoneError) setPhoneError(""); }}
-                        onFocus={() => { if (!phone) setPhone("+7 "); }}
+                        onChange={(e) => { setPhone(formatPhone(e.target.value)); moveCaretToEnd(); if (phoneError) setPhoneError(""); }}
+                        onFocus={() => { if (!phone) setPhone("+7 "); moveCaretToEnd(); }}
+                        onClick={moveCaretToEnd}
+                        onKeyUp={moveCaretToEnd}
                         onKeyDown={(e) => {
                           if ((e.key === "Backspace" || e.key === "Delete") && phone.replace(/\D/g, "").length <= 1) e.preventDefault();
+                          if (e.key === "Home" || e.key === "ArrowLeft" || e.key === "ArrowUp") { e.preventDefault(); moveCaretToEnd(); }
                         }}
                         type="tel"
                         inputMode="tel"
+                        autoComplete="tel"
+                        spellCheck={false}
                         aria-invalid={!!phoneError}
                         className={`bg-[#0d0d0d] text-white h-12 rounded-sm ${phoneError ? "border-red-500/60" : "border-white/10"}`}
                       />
