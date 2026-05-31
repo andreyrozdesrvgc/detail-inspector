@@ -6,7 +6,7 @@ export const BRAND = {
   phoneRaw: "+79685000121",
   telegram: "https://t.me/detail_inspector",
   whatsapp: "https://wa.me/79685000121",
-  address: "Москва, ул. Кузнецкий мост, 21",
+  address: "Москва, 1-й Дорожный проезд, 5А, 117545",
 };
 
 export const BMW_MODELS = [

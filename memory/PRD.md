@@ -1,50 +1,84 @@
-# Detail Inspector — BMW Landing PRD
+# Detail Inspector — Премиум-лендинг для оклейки BMW
 
-## Original Problem Statement
-Premium dark single-page landing for BMW PPF wrapping studio "Detail Inspector" targeting BMW owners (cars 5M+ RUB, avg ticket 350k RUB). Russian language. Strict palette: #050505 bg, #0d0d0d blocks, #151515 cards, #ffffff text, #9a9a9a muted. No blue/red/gold. Premium feel à la Porsche/BMW Individual/Apple. Framer Motion animations. SEO landing with structured data.
+## Original Problem Statement (RU)
+Создать полноценный одностраничный лендинг для премиум-студии оклейки автомобилей полиуретановой плёнкой под брендом **Detail Inspector**. Целевая аудитория — владельцы автомобилей от 5 млн рублей (BMW). Тёмный, дорогой стиль, премиальные шрифты + золотые переливающиеся акценты. Лендинг включает Hero, Триггеры, Таблицу сравнений, Многошаговый квиз-калькулятор, Карточки команды, Галерею кейсов Reels-формата, Процесс работы, Блок гарантий, FAQ, SEO-текст. Развертывание на VPS (Ubuntu).
 
-## Stack
-- React + FastAPI + MongoDB (Emergent platform)
-- Framer Motion for animations
-- Tailwind + shadcn/ui (Dialog, Accordion, Input)
-- Manrope (display) + Inter (body) + JetBrains Mono (mono)
+## Tech Stack
+- **Frontend**: React SPA (CRA) + Tailwind CSS + Framer Motion + shadcn/ui + sonner toasts
+- **Backend**: FastAPI + Motor (MongoDB async) + httpx
+- **DB**: MongoDB (collections: `leads`, `status_checks`)
+- **Deployment**: Selectel VPS (Ubuntu 24.04), Nginx + Gunicorn + Systemd
 
-## User Personas
-- **BMW owner (5–25M ₽ car)**: technical, premium-oriented, values documents/process over marketing fluff
-- **Returning client / referral**: needs proof (cases, team credentials, guarantee)
+## Key Files
+```
+/app/
+├── backend/
+│   ├── server.py              # FastAPI + Telegram notifications + pricing engine
+│   ├── requirements.txt
+│   └── .env                   # MONGO_URL, DB_NAME, TELEGRAM_BOT_TOKEN, TELEGRAM_CHAT_ID
+├── frontend/
+│   ├── public/
+│   │   ├── logo.png
+│   │   ├── favicon.ico, favicon-*.png, apple-touch-icon.png, android-chrome-*.png
+│   │   ├── site.webmanifest
+│   │   ├── reels/             # ← User uploads videos here: 1.mp4, 2.mp4, ...
+│   │   └── hero/1.webp, hero/2.webp
+│   └── src/
+│       ├── App.css, index.css # Gold gradient animations (goldShimmer, btn-gold, etc.)
+│       ├── lib/data.js, lib/api.js, lib/leadContext.js
+│       └── components/landing/
+│           ├── Header.js, Hero.js, Triggers.js, Comparison.js,
+│           ├── Calculator.js (client-side pricing, no network failures),
+│           ├── Team.js, Cases.js, ReelsGallery.js (video-aware),
+│           ├── Process.js, Guarantee.js, FAQSection.js, Footer.js,
+│           ├── LeadDialog.js, ExitIntent.js, MobileCTA.js
+```
 
-## Core Requirements (static)
-- 17+ section landing covering hero, triggers, comparison, quiz calculator, team, cases, process timeline, control, guarantee with A4 documents, BMW marquee, reels gallery, FAQ, SEO text, footer
-- Leads saved to MongoDB; Telegram integration deferred
-- Multi-step quiz with priced result (deterministic pricing engine)
-- Exit-intent + mobile FAB + floating TG calc widget
-- SEO: title/meta/OG/Twitter/canonical + 3 JSON-LD blocks (LocalBusiness/AutoRepair/Service) + sitemap.xml + robots.txt
-- All interactive elements have data-testid
+## Key API endpoints
+- `GET /api/health` → `{status, ts, telegram_configured}`
+- `POST /api/calculate` → returns `{estimated_price, price_label, gift, summary}`
+- `POST /api/leads` → saves lead + fires Telegram notification in background
+- `GET /api/leads?limit=N` → list of leads
+- `POST /api/telegram/test` → sends a test message to Telegram
 
-## Implemented (Dec 2025)
-- Backend: `/api/health`, `/api/calculate` (model × task × condition pricing), `/api/leads` (POST/GET) — all tested 100%
-- Frontend: 18 landing components in `/app/frontend/src/components/landing/`
-- Pages: `BMWLanding.js` (routes `/` and `/bmw`)
-- LeadProvider context — opens shared LeadDialog from anywhere with source tracking
-- Pricing engine maps in server.py (MODEL_BASE, TASK_MULT, CONDITION_ADJ)
-- Dialog a11y (sr-only DialogTitle/Description)
+## DB Schema
+- `leads`: `{id, name, phone, bmw_model, task, condition, source, note, estimated_price, extra, created_at}`
 
-## P0 Backlog (deferred)
-- Telegram bot integration for instant lead notifications (Bot Token + Chat ID needed from user)
-- Real photos/videos from studio (currently stock Unsplash/Pexels)
-- Real Yandex/2GIS reviews API integration
+## 3rd Party Integrations
+- **Telegram Bot API** (sendMessage via httpx) — fire-and-forget background task
+  - Token & chat ID in `/app/backend/.env`
+  - HTML-formatted message with full quiz data, source, price
 
-## P1 Backlog
-- Admin panel to view leads
-- Persist UTM parameters in leads
-- Real darkmode Yandex/Google map embed (currently SVG stylized)
-- Server-side rendering (Next.js migration if SEO requires it)
+## Completed (Feb 2026 — session 2)
+- ✅ Full landing UI (all sections, gold gradient accents)
+- ✅ Pricing engine (deterministic, mirrored client+server)
+- ✅ Lead form with multi-step flow
+- ✅ Manual VPS deployment instructions for user (Selectel)
+- ✅ **Comparison block**: gold "протокол безопасности" header text, button centered on mobile (`w-full max-w-sm md:w-auto`)
+- ✅ **Calculator**: smoother step transitions (900ms + 1100ms), bug fix (client-side computation, no network failure path), full quiz data (`extra`) sent to backend
+- ✅ **Team block**: compact mobile sizing (smaller paddings, text)
+- ✅ **Cases modal**: smaller first photo on mobile (`aspect-[16/10] max-h-[32vh]`), gold CTA button confirmed
+- ✅ **Reels gallery**: now supports actual videos at `/public/reels/<id>.mp4` with hover-play preview + lightbox player; falls back to "Видео скоро" badge if file is missing
+- ✅ **Footer map**: Yandex Maps iframe with explicit pin at "Москва, 1-й Дорожный проезд, 5А, 117545", click-through link to full map
+- ✅ **Telegram integration**: Each lead form submission (Hero, LeadDialog, Calculator, Cases, Team, Reels, Comparison) sends a formatted HTML notification with all collected data (name, phone, BMW model, quiz answers, source, price) to the configured chat
+- ✅ **Favicons**: Full set generated from logo (16/32/48 .ico+png, 180 apple-touch, 192/512 android-chrome) + site.webmanifest
+- ✅ **Logo size**: reduced in header (`h-5 md:h-6`, was `h-7 md:h-9`)
 
-## P2 Backlog
-- Multi-brand templating (Porsche, Mercedes pages)
-- A/B testing for CTA copy
-- Real Reels video assets
+## Pending / Backlog
+- P1 — Replace stub URLs (`#`) for Политика конфиденциальности / Договор оферты / Реквизиты
+- P1 — User to upload actual videos to `/public/reels/1.mp4` … `10.mp4` (folder created, autodetection ready)
+- P2 — CallTouch coltracking integration on phone numbers + "Заказать звонок" buttons (user mentioned)
+- P3 — Optional: restore Nginx gzip/cache-control blocks on VPS
+- P3 — PRD originally requested Next.js SSR; currently using CRA SPA (no user complaint)
 
-## Tested
-- Backend: 10/10 (health, calculate, leads CRUD, validation)
-- Frontend: 9/9 (hero, header CTA, lead dialog, calculator quiz, team tabs, case modal, doc modal navigation, FAQ accordion, final CTA submit)
+## Credentials & Config
+- `TELEGRAM_BOT_TOKEN`: stored in `/app/backend/.env`
+- `TELEGRAM_CHAT_ID`: `7505435012` (single recipient)
+- VPS: Selectel Ubuntu 24.04, Nginx + Gunicorn + systemd (user-managed)
+
+## Health Check
+- ✅ Backend: `/api/health` → 200, `telegram_configured: true`
+- ✅ Telegram test message delivered (verified via `/api/telegram/test`)
+- ✅ End-to-end lead form (curl) → 200, message in Telegram
+- ✅ Calculator quiz: client-side computation, no network errors
+- ✅ Mobile responsiveness verified via Playwright (390x844)

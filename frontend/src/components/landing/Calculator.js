@@ -3,16 +3,49 @@ import { motion, AnimatePresence } from "framer-motion";
 import { ArrowLeft, ArrowRight, Check, Loader2, Gift } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { BMW_MODELS, QUIZ_TASKS, QUIZ_CONDITIONS } from "@/lib/data";
-import { calculate, submitLead } from "@/lib/api";
+import { submitLead } from "@/lib/api";
 import { toast } from "sonner";
 
 const stepLabels = ["Модель BMW", "Задача", "Состояние", "Контакты"];
 
+// Local pricing engine — deterministic mirror of the backend one.
+// Calculated client-side to bulletproof the UX against any network failure.
+const MODEL_BASE = {
+  "X5 G05": 340000,
+  "X6 G06": 360000,
+  "X7 G07": 390000,
+  "5 Series G60": 320000,
+  "7 Series G70": 410000,
+  "M3 / M4": 380000,
+  "M5 G90": 420000,
+  "iX / i7": 400000,
+  "XM": 450000,
+  "Другая модель": 350000,
+};
+const TASK_MULT = {
+  "Полная оклейка кузова": 1.0,
+  "Зоны риска": 0.45,
+  "Антигравий + антихром": 0.65,
+  "Смена цвета": 1.35,
+};
+const COND_ADJ = {
+  "Новый автомобиль": 0,
+  "Есть сколы": 18000,
+  "После другой студии": 35000,
+};
+
+function computePrice(model, task, condition) {
+  const base = MODEL_BASE[model] ?? 350000;
+  const mult = TASK_MULT[task] ?? 1.0;
+  const adj = COND_ADJ[condition] ?? 0;
+  return Math.round((base * mult + adj) / 1000) * 1000;
+}
+
 const fadeIn = {
-  initial: { opacity: 0, y: 16 },
+  initial: { opacity: 0, y: 20 },
   animate: { opacity: 1, y: 0 },
   exit: { opacity: 0, y: -16 },
-  transition: { duration: 0.4, ease: [0.16, 1, 0.3, 1] },
+  transition: { duration: 0.55, ease: [0.16, 1, 0.3, 1] },
 };
 
 export default function Calculator() {
@@ -35,27 +68,33 @@ export default function Calculator() {
     phase === "preview" || phase === "loading" ? 2 :
     phase === "contact" ? 3 : 4;
 
+  // Smoother transitions — slightly longer pause so users see the selection.
+  const STEP_DELAY = 900;
+  const LOADING_DELAY = 1100;
+
   const onSelectModel = (m) => {
     setModel(m);
-    setTimeout(() => setPhase("step2"), 220);
+    setTimeout(() => setPhase("step2"), STEP_DELAY);
   };
   const onSelectTask = (label) => {
     setTask(label);
-    setTimeout(() => setPhase("step3"), 220);
+    setTimeout(() => setPhase("step3"), STEP_DELAY);
   };
-  const onSelectCondition = async (label) => {
+  const onSelectCondition = (label) => {
     setCondition(label);
-    setTimeout(async () => {
+    setTimeout(() => {
       setPhase("loading");
-      try {
-        const res = await calculate({ bmw_model: model, task, condition: label });
-        setPreview(res);
+      // Compute locally — no network call, no error path.
+      const price = computePrice(model, task, label);
+      setTimeout(() => {
+        setPreview({
+          estimated_price: price,
+          summary: `${model} · ${task} · ${label}`,
+          gift: "Бесплатная оклейка зоны погрузки",
+        });
         setPhase("preview");
-      } catch {
-        toast.error("Не удалось рассчитать. Попробуйте ещё раз.");
-        setPhase("step3");
-      }
-    }, 220);
+      }, LOADING_DELAY);
+    }, STEP_DELAY);
   };
 
   const chooseIntent = (i) => {
@@ -80,11 +119,17 @@ export default function Calculator() {
         source: `calculator-${intent || "default"}`,
         estimated_price: preview?.estimated_price,
         note: intent === "inspect" ? "Бесплатный осмотр" : intent === "consult" ? "Консультация" : null,
+        extra: {
+          "Модель BMW": model,
+          "Задача": task,
+          "Состояние": condition,
+          "Тип запроса": intent === "inspect" ? "Бесплатный осмотр" : intent === "consult" ? "Консультация" : "Расчёт",
+        },
       });
       setResult(preview);
       setPhase("done");
     } catch {
-      toast.error("Не удалось отправить.");
+      toast.error("Не удалось отправить заявку. Попробуйте ещё раз.");
     } finally {
       setLoading(false);
     }
@@ -314,8 +359,8 @@ export default function Calculator() {
                             key={m}
                             onClick={() => onSelectModel(m)}
                             data-testid={`calc-model-${m}`}
-                            className={`border text-sm py-4 px-3 text-left transition-all ${
-                              model === m ? "bg-white text-black border-white" : "border-white/10 text-white hover:border-white/40"
+                            className={`border text-sm py-4 px-3 text-left transition-all duration-500 ${
+                              model === m ? "bg-white text-black border-white scale-[0.98]" : "border-white/10 text-white hover:border-white/40"
                             }`}
                           >
                             {m}
@@ -331,8 +376,8 @@ export default function Calculator() {
                             key={t.id}
                             onClick={() => onSelectTask(t.label)}
                             data-testid={`calc-task-${t.id}`}
-                            className={`border p-5 text-left transition-all ${
-                              task === t.label ? "bg-white text-black border-white" : "border-white/10 text-white hover:border-white/40"
+                            className={`border p-5 text-left transition-all duration-500 ${
+                              task === t.label ? "bg-white text-black border-white scale-[0.98]" : "border-white/10 text-white hover:border-white/40"
                             }`}
                           >
                             <div className="text-sm font-medium mb-1">{t.label}</div>
@@ -349,8 +394,8 @@ export default function Calculator() {
                             key={c.id}
                             onClick={() => onSelectCondition(c.label)}
                             data-testid={`calc-cond-${c.id}`}
-                            className={`border p-5 text-left transition-all ${
-                              condition === c.label ? "bg-white text-black border-white" : "border-white/10 text-white hover:border-white/40"
+                            className={`border p-5 text-left transition-all duration-500 ${
+                              condition === c.label ? "bg-white text-black border-white scale-[0.98]" : "border-white/10 text-white hover:border-white/40"
                             }`}
                           >
                             <div className="text-sm font-medium mb-1">{c.label}</div>

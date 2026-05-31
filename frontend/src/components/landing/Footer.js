@@ -1,6 +1,12 @@
 import { BRAND } from "@/lib/data";
 
 export default function Footer() {
+  // Address: Москва, 1-й Дорожный проезд, 5А, 117545
+  // Yandex Maps widget — explicit pin via pt= parameter ensures the marker
+  // is visible immediately even before the address is geocoded.
+  const mapSrc =
+    "https://yandex.ru/map-widget/v1/?ll=37.605200%2C55.625340&z=16&pt=37.605200%2C55.625340%2Cpm2rdm&l=map";
+
   return (
     <footer
       id="contacts"
@@ -10,7 +16,7 @@ export default function Footer() {
       <div className="max-w-[1400px] mx-auto px-6 md:px-10 grid grid-cols-1 md:grid-cols-[1.5fr_1fr_1fr_1.4fr] gap-12">
         <div>
         <div className="flex items-center gap-3 mb-6">
-            <img src="/logo.png" alt="Detail Inspector" className="h-12 w-auto" />
+            <img src="/logo.png" alt="Detail Inspector" className="h-8 md:h-10 w-auto" />
           </div>
           <p className="text-sm text-[#9a9a9a] leading-relaxed max-w-sm mb-6">
             Премиальная оклейка BMW полиуретановой плёнкой. Защита ЛКП, сохранение стоимости автомобиля на 10+ лет.
@@ -24,7 +30,7 @@ export default function Footer() {
           <div className="eyebrow mb-6">Контакты</div>
           <ul className="space-y-3 text-sm">
             <li><a href={`tel:${BRAND.phoneRaw}`} data-testid="footer-phone" className="text-white hover:text-white/70 transition-colors font-mono">{BRAND.phone}</a></li>
-            <li className="text-[#9a9a9a]">{BRAND.address}</li>
+            <li className="text-[#9a9a9a] leading-relaxed">{BRAND.address}</li>
           </ul>
         </div>
 
@@ -39,26 +45,27 @@ export default function Footer() {
 
         <div>
           <div className="eyebrow mb-6">Студия в Москве</div>
-          <div className="aspect-[4/3] bg-[#0d0d0d] border border-white/10 overflow-hidden relative" data-testid="footer-map">
-            {/* Stylized dark map placeholder */}
-            <svg viewBox="0 0 400 300" className="w-full h-full">
-              <rect width="400" height="300" fill="#0a0a0a" />
-              <g stroke="#1f1f1f" strokeWidth="0.5" fill="none">
-                {Array.from({ length: 20 }).map((_, i) => (
-                  <line key={`v${i}`} x1={i * 20} y1="0" x2={i * 20} y2="300" />
-                ))}
-                {Array.from({ length: 16 }).map((_, i) => (
-                  <line key={`h${i}`} x1="0" y1={i * 20} x2="400" y2={i * 20} />
-                ))}
-              </g>
-              <path d="M0 180 Q 100 160, 200 175 T 400 170" stroke="#2a2a2a" strokeWidth="2" fill="none" />
-              <path d="M50 0 L120 80 L200 100 L260 200 L300 300" stroke="#2a2a2a" strokeWidth="1.4" fill="none" />
-              <path d="M0 100 L160 130 L240 90 L400 130" stroke="#2a2a2a" strokeWidth="1.4" fill="none" />
-              <circle cx="210" cy="155" r="6" fill="#ffffff" />
-              <circle cx="210" cy="155" r="14" fill="#ffffff" opacity="0.15" />
-              <circle cx="210" cy="155" r="24" fill="#ffffff" opacity="0.06" />
-            </svg>
-            <div className="absolute bottom-3 left-3 text-[10px] uppercase tracking-[0.2em] text-white/70 font-mono">Москва · Кузнецкий мост</div>
+          <div
+            className="aspect-[4/3] bg-[#0d0d0d] border border-white/10 overflow-hidden relative"
+            data-testid="footer-map"
+          >
+            <iframe
+              src={mapSrc}
+              title="Detail Inspector · Москва, 1-й Дорожный проезд, 5А"
+              loading="lazy"
+              allowFullScreen
+              className="w-full h-full"
+              style={{ border: 0, filter: "grayscale(0.4) contrast(1.05)" }}
+            />
+            <a
+              href="https://yandex.ru/maps/?text=Москва%2C%201-й%20Дорожный%20проезд%2C%205А"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="absolute bottom-3 left-3 right-3 bg-black/70 backdrop-blur-sm border border-white/10 px-3 py-2 text-[10px] uppercase tracking-[0.18em] text-white/90 hover:text-white transition-colors"
+              data-testid="footer-map-link"
+            >
+              {BRAND.address}
+            </a>
           </div>
         </div>
       </div>

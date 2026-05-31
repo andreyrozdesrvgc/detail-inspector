@@ -36,7 +36,7 @@ export default function Header() {
     >
       <div className="max-w-[1400px] mx-auto px-6 md:px-10 h-[72px] flex items-center justify-between">
         <a href="#top" className="flex items-center gap-3" data-testid="logo-link">
-          <img src="/logo.png" alt="Detail Inspector" className="h-10 md:h-12 w-auto" />
+          <img src="/logo.png" alt="Detail Inspector" className="h-5 md:h-6 w-auto" />
         </a>
 
         <nav className="hidden md:flex items-center gap-10" aria-label="Главное меню">

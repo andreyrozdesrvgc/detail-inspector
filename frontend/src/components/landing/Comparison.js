@@ -26,7 +26,8 @@ export default function Comparison() {
           <div className="eyebrow mb-5">Сравнение стандартов</div>
           <h2 className="font-display text-[34px] md:text-[56px] leading-[1.02] tracking-[-0.03em] mb-6">
             Не рискуйте новым автомобилем:<br />
-            <span className="text-white">выберите доказуемый протокол безопасности</span>
+            <span className="text-white">выберите доказуемый </span>
+            <span className="gold-text">протокол безопасности</span>
           </h2>
           <p className="text-[#9a9a9a] text-base md:text-lg leading-relaxed max-w-2xl">
             Сравните, чем отличается «гаражная» оклейка от стандартов Detail Inspector.
@@ -128,11 +129,11 @@ export default function Comparison() {
           ))}
         </div>
 
-        <div className="mt-12">
+        <div className="mt-12 w-full flex justify-center md:justify-start">
           <button
             onClick={() => openLead({ source: "comparison" })}
             data-testid="comparison-cta"
-            className="btn-primary px-8 py-4 uppercase tracking-[0.18em] text-xs font-medium"
+            className="btn-gold px-8 py-4 uppercase tracking-[0.18em] text-xs font-medium rounded-sm w-full max-w-sm md:w-auto md:max-w-none"
           >
             <span>Рассчитать стоимость онлайн</span>
           </button>

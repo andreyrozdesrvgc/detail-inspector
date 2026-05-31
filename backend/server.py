@@ -1,9 +1,11 @@
-from fastapi import FastAPI, APIRouter, HTTPException
+from fastapi import FastAPI, APIRouter, HTTPException, BackgroundTasks
 from dotenv import load_dotenv
 from starlette.middleware.cors import CORSMiddleware
 from motor.motor_asyncio import AsyncIOMotorClient
 import os
 import logging
+import html
+import httpx
 from pathlib import Path
 from pydantic import BaseModel, Field, ConfigDict
 from typing import List, Optional, Dict, Any
@@ -18,6 +20,10 @@ load_dotenv(ROOT_DIR / '.env')
 mongo_url = os.environ['MONGO_URL']
 client = AsyncIOMotorClient(mongo_url)
 db = client[os.environ['DB_NAME']]
+
+# Telegram configuration
+TG_TOKEN = os.environ.get('TELEGRAM_BOT_TOKEN', '').strip()
+TG_CHAT_ID = os.environ.get('TELEGRAM_CHAT_ID', '').strip()
 
 logging.basicConfig(
     level=logging.INFO,
@@ -111,6 +117,97 @@ CONDITION_ADJ = {
 }
 
 
+# =========================
+# Telegram notification
+# =========================
+def _format_lead_message(lead: Lead) -> str:
+    """Build an HTML-formatted Telegram message with all collected lead info."""
+    def esc(v: Any) -> str:
+        return html.escape(str(v)) if v is not None and v != "" else "—"
+
+    source_map = {
+        "header": "Шапка сайта",
+        "hero": "Hero блок",
+        "comparison": "Блок сравнения",
+        "mobile-menu": "Мобильное меню",
+        "mobile-cta": "Мобильная CTA",
+        "photo-cta": "Фото-блок",
+        "exit-intent": "Exit-intent",
+        "final-cta": "Финальный CTA",
+        "guarantee": "Блок гарантий",
+        "control": "Блок контроля",
+        "calculator-default": "Калькулятор · отправка",
+        "calculator-inspect": "Калькулятор · бесплатный осмотр",
+        "calculator-consult": "Калькулятор · консультация",
+    }
+    src = lead.source or "website"
+    if src.startswith("team-"):
+        src_label = f"Карточка команды · {src.split('-', 1)[1]}"
+    elif src.startswith("reel-"):
+        src_label = f"Reels-кейс № {src.split('-', 1)[1]}"
+    elif src.startswith("case-"):
+        src_label = f"Кейс · {src.split('-', 1)[1]}"
+    else:
+        src_label = source_map.get(src, src)
+
+    lines = [
+        "<b>🚗 Новая заявка · Detail Inspector</b>",
+        "",
+        f"<b>Имя:</b> {esc(lead.name)}",
+        f"<b>Телефон:</b> <code>{esc(lead.phone)}</code>",
+    ]
+    if lead.bmw_model:
+        lines.append(f"<b>Модель BMW:</b> {esc(lead.bmw_model)}")
+    if lead.task:
+        lines.append(f"<b>Задача:</b> {esc(lead.task)}")
+    if lead.condition:
+        lines.append(f"<b>Состояние:</b> {esc(lead.condition)}")
+    if lead.estimated_price:
+        price_str = f"{int(lead.estimated_price):,}".replace(",", " ")
+        lines.append(f"<b>Ориентировочно:</b> от {price_str} ₽")
+    if lead.note:
+        lines.append(f"<b>Комментарий:</b> {esc(lead.note)}")
+
+    # Extra fields (e.g. quiz answers)
+    if lead.extra and isinstance(lead.extra, dict):
+        extra_filtered = {k: v for k, v in lead.extra.items() if v not in (None, "", [])}
+        if extra_filtered:
+            lines.append("")
+            lines.append("<b>Доп. данные:</b>")
+            for k, v in extra_filtered.items():
+                lines.append(f"• <i>{esc(k)}</i>: {esc(v)}")
+
+    lines.append("")
+    lines.append(f"<b>Источник:</b> {esc(src_label)}")
+    lines.append(f"<i>{lead.created_at.strftime('%d.%m.%Y %H:%M UTC')}</i>")
+    return "\n".join(lines)
+
+
+async def send_telegram_notification(lead: Lead) -> None:
+    """Fire-and-forget Telegram notification. Errors are logged, never raised."""
+    if not TG_TOKEN or not TG_CHAT_ID:
+        logger.warning("Telegram disabled: TELEGRAM_BOT_TOKEN/TELEGRAM_CHAT_ID not set")
+        return
+
+    text = _format_lead_message(lead)
+    url = f"https://api.telegram.org/bot{TG_TOKEN}/sendMessage"
+    payload = {
+        "chat_id": TG_CHAT_ID,
+        "text": text,
+        "parse_mode": "HTML",
+        "disable_web_page_preview": True,
+    }
+    try:
+        async with httpx.AsyncClient(timeout=8.0) as http:
+            resp = await http.post(url, json=payload)
+            if resp.status_code != 200:
+                logger.error(f"Telegram error {resp.status_code}: {resp.text[:300]}")
+            else:
+                logger.info(f"Telegram OK · lead={lead.id} phone={lead.phone}")
+    except Exception as e:
+        logger.exception(f"Telegram send failed: {e}")
+
+
 @api_router.get("/")
 async def root():
     return {"message": "Detail Inspector BMW API"}
@@ -118,7 +215,11 @@ async def root():
 
 @api_router.get("/health")
 async def health():
-    return {"status": "ok", "ts": datetime.now(timezone.utc).isoformat()}
+    return {
+        "status": "ok",
+        "ts": datetime.now(timezone.utc).isoformat(),
+        "telegram_configured": bool(TG_TOKEN and TG_CHAT_ID),
+    }
 
 
 @api_router.post("/status", response_model=StatusCheck)
@@ -155,7 +256,7 @@ async def calculate_price(payload: CalculateRequest):
 
 
 @api_router.post("/leads", response_model=Lead)
-async def create_lead(payload: LeadCreate):
+async def create_lead(payload: LeadCreate, background: BackgroundTasks):
     if not payload.phone or len(payload.phone.strip()) < 5:
         raise HTTPException(status_code=400, detail="Phone is required")
     lead = Lead(**payload.model_dump())
@@ -163,6 +264,8 @@ async def create_lead(payload: LeadCreate):
     doc['created_at'] = doc['created_at'].isoformat()
     await db.leads.insert_one(doc)
     logger.info(f"New lead saved: {lead.phone} | {lead.bmw_model} | {lead.source}")
+    # Send Telegram notification in background — never blocks response
+    background.add_task(send_telegram_notification, lead)
     return lead
 
 
@@ -173,6 +276,25 @@ async def list_leads(limit: int = 100):
         if isinstance(d.get('created_at'), str):
             d['created_at'] = datetime.fromisoformat(d['created_at'])
     return docs
+
+
+@api_router.post("/telegram/test")
+async def telegram_test():
+    """Manual test endpoint to verify Telegram configuration."""
+    if not TG_TOKEN or not TG_CHAT_ID:
+        raise HTTPException(status_code=400, detail="Telegram not configured")
+    test_lead = Lead(
+        name="Тест",
+        phone="+7 (000) 000-00-00",
+        bmw_model="X5 G05",
+        task="Полная оклейка кузова",
+        condition="Новый автомобиль",
+        estimated_price=340000,
+        source="telegram-test",
+        note="Это тестовое сообщение",
+    )
+    await send_telegram_notification(test_lead)
+    return {"ok": True}
 
 
 app.include_router(api_router)

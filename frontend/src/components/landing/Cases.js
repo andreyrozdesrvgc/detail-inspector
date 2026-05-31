@@ -96,7 +96,7 @@ export default function Cases() {
                     data-testid="case-modal-zoom"
                     aria-label="Увеличить"
                   >
-                    <div className="aspect-[16/11] overflow-hidden bg-[#151515]">
+                    <div className="aspect-[16/10] md:aspect-[16/11] max-h-[32vh] md:max-h-none overflow-hidden bg-[#151515]">
                       <img src={active.gallery[activeImg]} alt={`${active.model} ${activeImg + 1}`} className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-[1.02]" />
                     </div>
                     <div className="absolute top-4 right-4 size-10 bg-black/60 backdrop-blur border border-white/20 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
@@ -123,11 +123,11 @@ export default function Cases() {
                 </div>
 
                 {/* Details */}
-                <div className="p-8 md:p-10">
-                  <div className="eyebrow mb-4">{active.duration}</div>
-                  <h3 className="font-display text-2xl md:text-3xl mb-4 leading-tight">{active.model}</h3>
-                  <p className="text-sm text-[#9a9a9a] leading-relaxed mb-6">{active.work}</p>
-                  <dl className="border-t border-white/10 pt-6 space-y-3 text-sm mb-8">
+                <div className="p-5 md:p-10">
+                  <div className="eyebrow mb-3 md:mb-4">{active.duration}</div>
+                  <h3 className="font-display text-xl md:text-3xl mb-3 md:mb-4 leading-tight">{active.model}</h3>
+                  <p className="text-sm text-[#9a9a9a] leading-relaxed mb-5 md:mb-6">{active.work}</p>
+                  <dl className="border-t border-white/10 pt-4 md:pt-6 space-y-2 md:space-y-3 text-sm mb-6 md:mb-8">
                     <div className="flex justify-between gap-3"><dt className="text-[#9a9a9a]">Стоимость авто</dt><dd className="text-white font-mono">{active.carPrice}</dd></div>
                     <div className="flex justify-between gap-3"><dt className="text-[#9a9a9a]">Срок</dt><dd className="text-white">{active.duration}</dd></div>
                     <div className="flex justify-between gap-3"><dt className="text-[#9a9a9a]">Стоимость проекта</dt><dd className="text-white font-medium">{active.price}</dd></div>
@@ -135,7 +135,7 @@ export default function Cases() {
                   <button
                     onClick={() => { setOpenIdx(null); openLead({ source: `case-${active.model}`, prefill: { bmw_model: active.model } }); }}
                     data-testid="case-modal-cta"
-                    className="btn-primary w-full py-4 uppercase tracking-[0.18em] text-[11px] font-medium"
+                    className="btn-gold w-full py-4 uppercase tracking-[0.18em] text-[11px] font-medium rounded-sm"
                   >
                     <span>Получить расчёт под мой BMW</span>
                   </button>
