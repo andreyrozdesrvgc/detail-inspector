@@ -1,19 +1,20 @@
 import { useEffect, useRef, useState } from "react";
-import { motion, useScroll, useTransform, AnimatePresence } from "framer-motion";
+import { motion, useScroll, useTransform } from "framer-motion";
 import { useLead } from "@/lib/leadContext";
 import { CDN_BASE } from "@/lib/data";
 
-// Hero shows the cover photo first, then auto-switches to a single video loop.
+// Hero shows the cover photo on top, with a looping video crossfading in
+// once it can actually play. Image always stays mounted underneath as a
+// failsafe — if the video fails (404 / wrong MIME / blocked codec), the
+// hero never goes black.
 const HERO_IMAGE = `${CDN_BASE}/hero/1.webp`;
 const HERO_VIDEO = `${CDN_BASE}/hero/1.mp4`;
-// How long the cover photo is shown before we crossfade to the video.
-const SWITCH_TO_VIDEO_MS = 3500;
 
 export default function Hero() {
   const { openLead } = useLead();
   const ref = useRef(null);
   const videoRef = useRef(null);
-  const [showVideo, setShowVideo] = useState(false);
+  const [videoReady, setVideoReady] = useState(false);
 
   const { scrollYProgress } = useScroll({
     target: ref,
@@ -23,22 +24,26 @@ export default function Hero() {
   const opacity = useTransform(scrollYProgress, [0, 0.7], [1, 0.3]);
   const y = useTransform(scrollYProgress, [0, 1], [0, 80]);
 
+  // Kick off playback as soon as the browser thinks it can render frames.
+  // iOS Safari often blocks the first play() unless explicitly retried.
   useEffect(() => {
-    const t = setTimeout(() => setShowVideo(true), SWITCH_TO_VIDEO_MS);
-    return () => clearTimeout(t);
-  }, []);
-
-  // Ensure the video starts playing when it appears. Browsers can swallow the
-  // first autoplay attempt on iOS Safari; we kick it manually on `canplay`.
-  useEffect(() => {
-    if (!showVideo) return;
     const el = videoRef.current;
     if (!el) return;
-    const tryPlay = () => el.play().catch(() => {});
-    tryPlay();
-    el.addEventListener("canplay", tryPlay);
-    return () => el.removeEventListener("canplay", tryPlay);
-  }, [showVideo]);
+    const onCanPlay = () => {
+      el.play()
+        .then(() => setVideoReady(true))
+        .catch(() => { /* still hidden — fallback image stays visible */ });
+    };
+    const onError = () => setVideoReady(false);
+    el.addEventListener("canplay", onCanPlay);
+    el.addEventListener("error", onError);
+    // Try right away too — in case canplay already fired before listener attached.
+    if (el.readyState >= 3) onCanPlay();
+    return () => {
+      el.removeEventListener("canplay", onCanPlay);
+      el.removeEventListener("error", onError);
+    };
+  }, []);
 
   return (
     <section
@@ -48,39 +53,31 @@ export default function Hero() {
       className="relative w-full min-h-screen overflow-hidden bg-[#050505]"
     >
       <motion.div style={{ scale, opacity }} className="absolute inset-0 z-0">
-        <AnimatePresence mode="sync">
-          {!showVideo ? (
-            <motion.img
-              key="cover"
-              src={HERO_IMAGE}
-              alt="BMW премиум защита полиуретановой плёнкой"
-              loading="eager"
-              fetchpriority="high"
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              exit={{ opacity: 0 }}
-              transition={{ duration: 1.4, ease: [0.4, 0, 0.2, 1] }}
-              className="absolute inset-0 w-full h-full object-cover"
-            />
-          ) : (
-            <motion.video
-              key="video"
-              ref={videoRef}
-              src={HERO_VIDEO}
-              poster={HERO_IMAGE}
-              autoPlay
-              muted
-              loop
-              playsInline
-              preload="auto"
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              exit={{ opacity: 0 }}
-              transition={{ duration: 1.6, ease: [0.4, 0, 0.2, 1] }}
-              className="absolute inset-0 w-full h-full object-cover"
-            />
-          )}
-        </AnimatePresence>
+        {/* 1. Cover image — always mounted, always visible as the safety net */}
+        <img
+          src={HERO_IMAGE}
+          alt="BMW премиум защита полиуретановой плёнкой"
+          loading="eager"
+          fetchpriority="high"
+          className="absolute inset-0 w-full h-full object-cover"
+        />
+
+        {/* 2. Video — fades in over the image once it can actually play.
+             If it errors out the image keeps showing — no black screen. */}
+        <video
+          ref={videoRef}
+          src={HERO_VIDEO}
+          poster={HERO_IMAGE}
+          autoPlay
+          muted
+          loop
+          playsInline
+          preload="auto"
+          className={`absolute inset-0 w-full h-full object-cover transition-opacity duration-[1400ms] ease-out ${
+            videoReady ? "opacity-100" : "opacity-0"
+          }`}
+        />
+
         <div className="absolute inset-0 bg-gradient-to-b from-[#050505]/40 via-[#050505]/55 to-[#050505]" />
         <div className="absolute inset-0 bg-gradient-to-r from-[#050505]/80 via-[#050505]/30 to-transparent" />
       </motion.div>
