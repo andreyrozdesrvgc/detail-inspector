@@ -44,7 +44,7 @@ export default function Cases() {
               transition={{ duration: 0.7, ease: [0.16, 1, 0.3, 1], delay: (i % 3) * 0.06 }}
               onClick={() => setOpenIdx(i)}
               data-testid={`case-card-${i}`}
-              className="bg-[#0d0d0d] text-left group lift"
+              className="bg-[#0d0d0d] text-left group lift h-full flex flex-col"
             >
               <div className="aspect-[4/3] overflow-hidden bg-[#151515]">
                 <img
@@ -54,14 +54,14 @@ export default function Cases() {
                   className="w-full h-full object-cover transition-transform duration-[1200ms] group-hover:scale-105"
                 />
               </div>
-              <div className="p-6 md:p-8">
+              <div className="p-6 md:p-8 flex-1 flex flex-col">
                 <div className="flex items-baseline justify-between mb-3">
                   <div className="eyebrow">{c.duration}</div>
                   <div className="font-mono text-xs text-white/60">{c.carPrice}</div>
                 </div>
                 <h3 className="font-display text-xl md:text-2xl mb-3 leading-tight">{c.model}</h3>
-                <p className="text-sm text-[#9a9a9a] leading-relaxed mb-5 line-clamp-2">{c.work}</p>
-                <div className="flex items-center justify-between pt-4 border-t border-white/10">
+                <p className="text-sm text-[#9a9a9a] leading-relaxed mb-5 line-clamp-2 min-h-[2.625rem]">{c.work}</p>
+                <div className="flex items-center justify-between pt-4 border-t border-white/10 mt-auto">
                   <span className="text-white text-sm font-medium">{c.price}</span>
                   <span className="text-xs uppercase tracking-[0.18em] text-white/70 group-hover:text-white">
                     Открыть →
