@@ -2,31 +2,34 @@ import { useEffect, useRef, useState } from "react";
 import { motion } from "framer-motion";
 import { Dialog, DialogContent, DialogTitle, DialogDescription } from "@/components/ui/dialog";
 import { useLead } from "@/lib/leadContext";
+import { CDN_BASE } from "@/lib/data";
 import { Play, X } from "lucide-react";
 
 /*
  * Reels gallery.
  *
  * 🎬 КАК ДОБАВИТЬ ВИДЕО:
- *   1. Положите файлы в /app/frontend/public/reels/
- *      → 1.mp4, 2.mp4, 3.mp4, ... (mp4, H.264, ≤ 30 МБ)
- *   2. (Опционально) Положите превью-кадры: /app/frontend/public/reels/1.jpg ...
- *   3. Никаких изменений кода не нужно — каждая карточка ниже уже знает свой путь.
- *      Если видео нет — карточка покажет статичное превью из Unsplash и всё равно
- *      будет вести на форму заявки.
+ *   1. Загрузите файлы в Yandex Cloud bucket:
+ *      → detail-inspector/reels/1.mp4, 2.mp4, ... (mp4, H.264, ≤ 30 МБ)
+ *   2. (Опционально) Постеры (первый кадр):
+ *      → detail-inspector/reels/1.jpg, 2.jpg, ...
+ *   3. Никаких изменений кода не нужно — каждая карточка знает свой путь.
+ *      Если видео нет — карточка покажет fallback-картинку
+ *      (detail-inspector/reels/reel-1.jpg ... reel-10.jpg).
  */
 
+const R = (path) => `${CDN_BASE}/reels/${path}`;
 const REELS = [
-  { id: 1, label: "Рассчитать проект защиты BMW", video: "/reels/1.mp4", poster: "/reels/1.jpg", fallback: "/reels/reel-1.jpg" },
-  { id: 2, label: "Получить персональную смету", video: "/reels/2.mp4", poster: "/reels/2.jpg", fallback: "/reels/reel-2.jpg" },
-  { id: 3, label: "Узнать стоимость оклейки", video: "/reels/3.mp4", poster: "/reels/3.jpg", fallback: "/reels/reel-3.jpg" },
-  { id: 4, label: "Оценить стоимость вашего BMW", video: "/reels/4.mp4", poster: "/reels/4.jpg", fallback: "/reels/reel-4.jpg" },
-  { id: 5, label: "Рассчитать защиту кузова", video: "/reels/5.mp4", poster: "/reels/5.jpg", fallback: "/reels/reel-5.jpg" },
-  { id: 6, label: "Получить консультацию мастера", video: "/reels/6.mp4", poster: "/reels/6.jpg", fallback: "/reels/reel-6.jpg" },
-  { id: 7, label: "Узнать цену для вашего авто", video: "/reels/7.mp4", poster: "/reels/7.jpg", fallback: "/reels/reel-7.jpg" },
-  { id: 8, label: "Заказать расчёт проекта", video: "/reels/8.mp4", poster: "/reels/8.jpg", fallback: "/reels/reel-8.jpg" },
-  { id: 9, label: "Получить индивидуальное предложение", video: "/reels/9.mp4", poster: "/reels/9.jpg", fallback: "/reels/reel-9.jpg" },
-  { id: 10, label: "Рассчитать стоимость за 15 минут", video: "/reels/10.mp4", poster: "/reels/10.jpg", fallback: "/reels/reel-10.jpg" },
+  { id: 1, label: "Рассчитать проект защиты BMW", video: R("1.mp4"), poster: R("1.jpg"), fallback: R("reel-1.jpg") },
+  { id: 2, label: "Получить персональную смету", video: R("2.mp4"), poster: R("2.jpg"), fallback: R("reel-2.jpg") },
+  { id: 3, label: "Узнать стоимость оклейки", video: R("3.mp4"), poster: R("3.jpg"), fallback: R("reel-3.jpg") },
+  { id: 4, label: "Оценить стоимость вашего BMW", video: R("4.mp4"), poster: R("4.jpg"), fallback: R("reel-4.jpg") },
+  { id: 5, label: "Рассчитать защиту кузова", video: R("5.mp4"), poster: R("5.jpg"), fallback: R("reel-5.jpg") },
+  { id: 6, label: "Получить консультацию мастера", video: R("6.mp4"), poster: R("6.jpg"), fallback: R("reel-6.jpg") },
+  { id: 7, label: "Узнать цену для вашего авто", video: R("7.mp4"), poster: R("7.jpg"), fallback: R("reel-7.jpg") },
+  { id: 8, label: "Заказать расчёт проекта", video: R("8.mp4"), poster: R("8.jpg"), fallback: R("reel-8.jpg") },
+  { id: 9, label: "Получить индивидуальное предложение", video: R("9.mp4"), poster: R("9.jpg"), fallback: R("reel-9.jpg") },
+  { id: 10, label: "Рассчитать стоимость за 15 минут", video: R("10.mp4"), poster: R("10.jpg"), fallback: R("reel-10.jpg") },
 ];
 
 // Probe a media URL (HEAD) — true if reachable (status 2xx).

@@ -1,5 +1,5 @@
 import { motion } from "framer-motion";
-import { BRAND } from "@/lib/data";
+import { BRAND, CDN_BASE } from "@/lib/data";
 import { useLead } from "@/lib/leadContext";
 import { Camera } from "lucide-react";
 
@@ -12,7 +12,7 @@ export default function PhotoCTA() {
     >
       <div className="absolute inset-0 opacity-30">
         <img
-          src="/cases/pexels-3.jpg"
+          src={`${CDN_BASE}/cases/pexels-3.jpg`}
           alt="Процесс PPF"
           loading="lazy"
           className="w-full h-full object-cover grayscale"

@@ -1,8 +1,9 @@
 import { useEffect, useRef, useState } from "react";
 import { motion, useScroll, useTransform, AnimatePresence } from "framer-motion";
 import { useLead } from "@/lib/leadContext";
+import { CDN_BASE } from "@/lib/data";
 
-const HERO_IMAGES = ["/hero/1.webp", "/hero/2.webp"];
+const HERO_IMAGES = [`${CDN_BASE}/hero/1.webp`, `${CDN_BASE}/hero/2.webp`];
 const ROTATE_MS = 10000;
 
 export default function Hero() {
