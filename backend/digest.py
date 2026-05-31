@@ -78,8 +78,12 @@ class MetrikaClient:
             return None
         params = {"ids": self.counter_id, **params}
         headers = {"Authorization": f"OAuth {self.oauth_token}"}
+        proxy = os.environ.get("TELEGRAM_PROXY", "").strip() or None
+        client_kwargs = {"timeout": 15.0}
+        if proxy:
+            client_kwargs["proxy"] = proxy
         try:
-            async with httpx.AsyncClient(timeout=15.0) as http:
+            async with httpx.AsyncClient(**client_kwargs) as http:
                 resp = await http.get(self.BASE, params=params, headers=headers)
                 if resp.status_code != 200:
                     logger.error(
@@ -341,8 +345,12 @@ async def send_telegram_html(token: str, chat_id: str, text: str) -> bool:
         "parse_mode": "HTML",
         "disable_web_page_preview": True,
     }
+    proxy = os.environ.get("TELEGRAM_PROXY", "").strip() or None
+    client_kwargs = {"timeout": 12.0}
+    if proxy:
+        client_kwargs["proxy"] = proxy
     try:
-        async with httpx.AsyncClient(timeout=10.0) as http:
+        async with httpx.AsyncClient(**client_kwargs) as http:
             resp = await http.post(url, json=payload)
             if resp.status_code != 200:
                 logger.error(f"Digest send error {resp.status_code}: {resp.text[:400]}")

@@ -201,8 +201,14 @@ async def send_telegram_notification(lead: Lead) -> None:
         "parse_mode": "HTML",
         "disable_web_page_preview": True,
     }
+    # Optional outbound proxy (e.g. Cloudflare WARP on socks5://127.0.0.1:40000)
+    # so the server can reach Telegram from regions where direct egress is blocked.
+    proxy = os.environ.get("TELEGRAM_PROXY", "").strip() or None
+    client_kwargs = {"timeout": 10.0}
+    if proxy:
+        client_kwargs["proxy"] = proxy
     try:
-        async with httpx.AsyncClient(timeout=8.0) as http:
+        async with httpx.AsyncClient(**client_kwargs) as http:
             resp = await http.post(url, json=payload)
             if resp.status_code != 200:
                 logger.error(f"Telegram error {resp.status_code}: {resp.text[:300]}")
