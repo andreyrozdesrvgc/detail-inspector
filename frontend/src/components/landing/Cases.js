@@ -140,16 +140,3 @@ export default function Cases() {
     </section>
   );
 }
-050505] border-0 text-white max-w-[96vw] w-[96vw] p-0 rounded-sm overflow-hidden">
-          <DialogTitle className="sr-only">{active ? active.model : "Фото"}</DialogTitle>
-          <DialogDescription className="sr-only">Полноразмерный просмотр фотографии кейса.</DialogDescription>
-          {active && (
-            <div className="w-full max-h-[92vh] flex items-center justify-center">
-              <img src={active.gallery[activeImg]} alt={active.model} className="max-w-full max-h-[92vh] object-contain" />
-            </div>
-          )}
-        </DialogContent>
-      </Dialog>
-    </section>
-  );
-}
