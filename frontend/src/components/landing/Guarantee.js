@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Dialog, DialogContent, DialogTitle, DialogDescription } from "@/components/ui/dialog";
-import { ChevronLeft, ChevronRight, ZoomIn, Maximize2, FileText, ShieldCheck, ClipboardList } from "lucide-react";
+import { ChevronLeft, ChevronRight, FileText, ShieldCheck, ClipboardList } from "lucide-react";
 import { DOCS } from "@/lib/data";
 import { useLead } from "@/lib/leadContext";
 
@@ -266,10 +266,18 @@ export default function Guarantee() {
                         <ChevronRight className="size-4" />
                       </button>
                     </div>
-                    <div className="flex items-center gap-2 text-xs text-[#9a9a9a]">
-                      <ZoomIn className="size-4" />
-                      <Maximize2 className="size-4" />
-                    </div>
+                    {DOCS[open].pdf && (
+                      <a
+                        href={DOCS[open].pdf}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        data-testid="doc-modal-pdf"
+                        className="btn-gold inline-flex items-center gap-2 px-5 py-2.5 uppercase tracking-[0.18em] text-[10px] font-semibold rounded-sm"
+                      >
+                        <FileText className="size-3.5" />
+                        <span>Открыть PDF</span>
+                      </a>
+                    )}
                   </div>
                 </div>
               </motion.div>
