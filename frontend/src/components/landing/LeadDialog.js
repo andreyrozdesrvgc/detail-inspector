@@ -4,6 +4,7 @@ import { Dialog, DialogContent, DialogTitle, DialogDescription } from "@/compone
 import { Input } from "@/components/ui/input";
 import { useLead } from "@/lib/leadContext";
 import { submitLead } from "@/lib/api";
+import { formatPhone, isValidRuPhone } from "@/lib/phone";
 import { toast } from "sonner";
 import { Check, Loader2 } from "lucide-react";
 
@@ -11,25 +12,41 @@ export default function LeadDialog() {
   const { open, source, prefill, closeLead } = useLead();
   const [step, setStep] = useState(1);
   const [name, setName] = useState("");
-  const [phone, setPhone] = useState("");
+  const [phone, setPhone] = useState("+7 ");
   const [model, setModel] = useState("");
+  const [errors, setErrors] = useState({});
   const [loading, setLoading] = useState(false);
 
   useEffect(() => {
     if (open) {
       setStep(1);
+      setErrors({});
       setName(prefill?.name || "");
-      setPhone(prefill?.phone || "");
+      setPhone(formatPhone(prefill?.phone) || "+7 ");
       setModel(prefill?.bmw_model || "");
     }
   }, [open, prefill]);
 
+  const onPhoneChange = (e) => setPhone(formatPhone(e.target.value));
+  const onPhoneFocus = () => { if (!phone || phone === "") setPhone("+7 "); };
+  const onPhoneKeyDown = (e) => {
+    // Prevent deleting the "+7 " prefix entirely.
+    if ((e.key === "Backspace" || e.key === "Delete") && phone.replace(/\D/g, "").length <= 1) {
+      e.preventDefault();
+    }
+  };
+
+  const validate = () => {
+    const errs = {};
+    if (!isValidRuPhone(phone)) errs.phone = "Введите номер РФ: +7 и ещё 10 цифр";
+    if (!model || model.trim().length < 2) errs.model = "Укажите модель BMW";
+    setErrors(errs);
+    return Object.keys(errs).length === 0;
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
-    if (!phone || phone.replace(/\D/g, "").length < 10) {
-      toast.error("Укажите корректный номер телефона");
-      return;
-    }
+    if (!validate()) return;
     setLoading(true);
     try {
       await submitLead({
@@ -74,7 +91,7 @@ export default function LeadDialog() {
                 Специалист свяжется в течение 15 минут и подготовит индивидуальное предложение под ваш автомобиль.
               </p>
 
-              <form onSubmit={handleSubmit} className="space-y-4">
+              <form onSubmit={handleSubmit} className="space-y-4" noValidate>
                 <Input
                   data-testid="lead-name-input"
                   placeholder="Имя"
@@ -82,22 +99,34 @@ export default function LeadDialog() {
                   onChange={(e) => setName(e.target.value)}
                   className="bg-[#151515] border-white/10 text-white h-12 rounded-sm"
                 />
-                <Input
-                  data-testid="lead-phone-input"
-                  placeholder="+7 (___) ___-__-__"
-                  value={phone}
-                  onChange={(e) => setPhone(e.target.value)}
-                  type="tel"
-                  required
-                  className="bg-[#151515] border-white/10 text-white h-12 rounded-sm"
-                />
-                <Input
-                  data-testid="lead-model-input"
-                  placeholder="Модель BMW (например, X5 G05)"
-                  value={model}
-                  onChange={(e) => setModel(e.target.value)}
-                  className="bg-[#151515] border-white/10 text-white h-12 rounded-sm"
-                />
+                <div>
+                  <Input
+                    data-testid="lead-phone-input"
+                    placeholder="+7 (___) ___-__-__"
+                    value={phone}
+                    onChange={onPhoneChange}
+                    onFocus={onPhoneFocus}
+                    onKeyDown={onPhoneKeyDown}
+                    type="tel"
+                    inputMode="tel"
+                    required
+                    aria-invalid={!!errors.phone}
+                    className={`bg-[#151515] text-white h-12 rounded-sm ${errors.phone ? "border-red-500/60" : "border-white/10"}`}
+                  />
+                  {errors.phone && <div className="text-red-400 text-[11px] mt-1.5" data-testid="lead-phone-error">{errors.phone}</div>}
+                </div>
+                <div>
+                  <Input
+                    data-testid="lead-model-input"
+                    placeholder="Модель BMW (например, X5 G05) *"
+                    value={model}
+                    onChange={(e) => setModel(e.target.value)}
+                    required
+                    aria-invalid={!!errors.model}
+                    className={`bg-[#151515] text-white h-12 rounded-sm ${errors.model ? "border-red-500/60" : "border-white/10"}`}
+                  />
+                  {errors.model && <div className="text-red-400 text-[11px] mt-1.5" data-testid="lead-model-error">{errors.model}</div>}
+                </div>
 
                 <button
                   type="submit"

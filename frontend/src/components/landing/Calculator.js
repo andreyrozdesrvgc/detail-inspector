@@ -4,6 +4,7 @@ import { ArrowLeft, ArrowRight, Check, Loader2, Gift } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { BMW_MODELS, QUIZ_TASKS, QUIZ_CONDITIONS } from "@/lib/data";
 import { submitLead } from "@/lib/api";
+import { formatPhone, isValidRuPhone } from "@/lib/phone";
 import { toast } from "sonner";
 
 const stepLabels = ["Модель BMW", "Задача", "Состояние", "Контакты"];
@@ -54,7 +55,8 @@ export default function Calculator() {
   const [task, setTask] = useState("");
   const [condition, setCondition] = useState("");
   const [name, setName] = useState("");
-  const [phone, setPhone] = useState("");
+  const [phone, setPhone] = useState("+7 ");
+  const [phoneError, setPhoneError] = useState("");
   const [intent, setIntent] = useState(""); // inspect | consult
   const [preview, setPreview] = useState(null);
   const [result, setResult] = useState(null);
@@ -104,10 +106,11 @@ export default function Calculator() {
 
   const submitContact = async (e) => {
     e.preventDefault();
-    if (!phone || phone.replace(/\D/g, "").length < 10) {
-      toast.error("Укажите корректный номер телефона");
+    if (!isValidRuPhone(phone)) {
+      setPhoneError("Введите номер РФ: +7 и ещё 10 цифр");
       return;
     }
+    setPhoneError("");
     setLoading(true);
     try {
       await submitLead({
@@ -137,7 +140,7 @@ export default function Calculator() {
 
   const reset = () => {
     setPhase("step1"); setModel(""); setTask(""); setCondition("");
-    setName(""); setPhone(""); setIntent(""); setPreview(null); setResult(null);
+    setName(""); setPhone("+7 "); setPhoneError(""); setIntent(""); setPreview(null); setResult(null);
   };
 
   const goBack = () => {
@@ -268,14 +271,23 @@ export default function Calculator() {
                       onChange={(e) => setName(e.target.value)}
                       className="bg-[#0d0d0d] border-white/10 text-white h-12 rounded-sm"
                     />
-                    <Input
-                      data-testid="calc-phone-input"
-                      placeholder="+7 (___) ___-__-__"
-                      value={phone}
-                      onChange={(e) => setPhone(e.target.value)}
-                      type="tel"
-                      className="bg-[#0d0d0d] border-white/10 text-white h-12 rounded-sm"
-                    />
+                    <div>
+                      <Input
+                        data-testid="calc-phone-input"
+                        placeholder="+7 (___) ___-__-__"
+                        value={phone}
+                        onChange={(e) => { setPhone(formatPhone(e.target.value)); if (phoneError) setPhoneError(""); }}
+                        onFocus={() => { if (!phone) setPhone("+7 "); }}
+                        onKeyDown={(e) => {
+                          if ((e.key === "Backspace" || e.key === "Delete") && phone.replace(/\D/g, "").length <= 1) e.preventDefault();
+                        }}
+                        type="tel"
+                        inputMode="tel"
+                        aria-invalid={!!phoneError}
+                        className={`bg-[#0d0d0d] text-white h-12 rounded-sm ${phoneError ? "border-red-500/60" : "border-white/10"}`}
+                      />
+                      {phoneError && <div className="text-red-400 text-[11px] mt-1.5" data-testid="calc-phone-error">{phoneError}</div>}
+                    </div>
                   </div>
                   <div className="mt-8 flex items-center justify-between border-t border-white/10 pt-6">
                     <button onClick={goBack} data-testid="calc-back-btn" className="text-xs uppercase tracking-[0.18em] text-[#9a9a9a] hover:text-white inline-flex items-center gap-2">

@@ -261,8 +261,13 @@ async def calculate_price(payload: CalculateRequest):
 
 @api_router.post("/leads", response_model=Lead)
 async def create_lead(payload: LeadCreate, background: BackgroundTasks):
-    if not payload.phone or len(payload.phone.strip()) < 5:
+    # Phone validation — must contain at least 10 digits (RU number).
+    raw_digits = ''.join(ch for ch in (payload.phone or '') if ch.isdigit())
+    if len(raw_digits) < 10:
         raise HTTPException(status_code=400, detail="Phone is required")
+    # BMW model is mandatory for every lead.
+    if not payload.bmw_model or len(payload.bmw_model.strip()) < 2:
+        raise HTTPException(status_code=400, detail="BMW model is required")
     lead = Lead(**payload.model_dump())
     doc = lead.model_dump()
     doc['created_at'] = doc['created_at'].isoformat()
