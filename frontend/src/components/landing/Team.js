@@ -57,7 +57,7 @@ export default function Team() {
               <img
                 src={member.img}
                 alt={member.name}
-                className="w-full h-full object-cover grayscale"
+                className="w-full h-full object-cover"
                 loading="lazy"
               />
               <div className="absolute inset-0 bg-gradient-to-t from-[#0d0d0d] via-transparent to-transparent" />
