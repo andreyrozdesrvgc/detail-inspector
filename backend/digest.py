@@ -101,9 +101,13 @@ class MetrikaClient:
         })
         if not data:
             return None
-        totals = data.get("totals", [[]])
-        row = totals[0] if totals else []
-        if len(row) < 5:
+        totals = data.get("totals")
+        if not totals:
+            return None
+        # Metrika returns flat list `[v1,v2,...]` when no dimensions are requested,
+        # but can return `[[v1,v2,...]]` in some cases. Handle both.
+        row = totals[0] if (totals and isinstance(totals[0], list)) else totals
+        if not row or len(row) < 5:
             return None
         return {
             "visits": int(row[0] or 0),
