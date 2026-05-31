@@ -60,7 +60,7 @@ export default function Cases() {
                   <div className="font-mono text-xs text-white/60">{c.carPrice}</div>
                 </div>
                 <h3 className="font-display text-xl md:text-2xl mb-3 leading-tight">{c.model}</h3>
-                <p className="text-sm text-[#9a9a9a] leading-relaxed mb-5">{c.work}</p>
+                <p className="text-sm text-[#9a9a9a] leading-relaxed mb-5 line-clamp-2">{c.work}</p>
                 <div className="flex items-center justify-between pt-4 border-t border-white/10">
                   <span className="text-white text-sm font-medium">{c.price}</span>
                   <span className="text-xs uppercase tracking-[0.18em] text-white/70 group-hover:text-white">
