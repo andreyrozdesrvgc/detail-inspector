@@ -429,14 +429,14 @@ async def start_scheduler():
     scheduler.add_job(
         _retry_pending,
         trigger="interval",
-        minutes=5,
+        minutes=1,
         id="resend-pending-leads",
-        name="Auto retry undelivered Telegram leads (every 5 min)",
+        name="Auto retry undelivered Telegram leads (every 1 min)",
         replace_existing=True,
     )
 
     scheduler.start()
-    logger.info("Scheduler started — daily digest 00:00 MSK + auto-resend every 5 min")
+    logger.info("Scheduler started — daily digest 00:00 MSK + auto-resend every 1 min")
 
 
 @app.on_event("shutdown")
