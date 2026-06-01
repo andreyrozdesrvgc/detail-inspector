@@ -15,6 +15,10 @@ import uuid
 from datetime import datetime, timezone
 
 from digest import build_and_send_daily_digest, MOSCOW_TZ
+from telegram_recipients import (
+    get_recipients,
+    poll_telegram_updates,
+)
 
 
 ROOT_DIR = Path(__file__).parent
@@ -191,44 +195,60 @@ def _format_lead_message(lead: Lead) -> str:
 async def send_telegram_notification(lead: Lead) -> bool:
     """Fire-and-forget Telegram notification.
 
-    Returns True on success, False on any failure.
-    On success we flip `telegram_sent` in Mongo so the background retry
-    job knows it no longer needs to be re-sent.
+    Broadcasts the lead to every recipient registered via /start or by
+    adding the bot to a group. Returns True if at least one delivery
+    succeeded (so we can mark `telegram_sent`).
     """
-    if not TG_TOKEN or not TG_CHAT_ID:
-        logger.warning("Telegram disabled: TELEGRAM_BOT_TOKEN/TELEGRAM_CHAT_ID not set")
+    if not TG_TOKEN:
+        logger.warning("Telegram disabled: TELEGRAM_BOT_TOKEN not set")
+        return False
+
+    chat_ids = await get_recipients(db)
+    if not chat_ids:
+        logger.warning("Telegram disabled: no recipients configured")
         return False
 
     text = _format_lead_message(lead)
     url = f"https://api.telegram.org/bot{TG_TOKEN}/sendMessage"
-    payload = {
-        "chat_id": TG_CHAT_ID,
-        "text": text,
-        "parse_mode": "HTML",
-        "disable_web_page_preview": True,
-    }
-    # Optional outbound proxy (e.g. Cloudflare WARP on socks5://127.0.0.1:40000)
-    # so the server can reach Telegram from regions where direct egress is blocked.
     proxy = os.environ.get("TELEGRAM_PROXY", "").strip() or None
     client_kwargs = {"timeout": 10.0}
     if proxy:
         client_kwargs["proxy"] = proxy
+
+    any_ok = False
     try:
         async with httpx.AsyncClient(**client_kwargs) as http:
-            resp = await http.post(url, json=payload)
-            if resp.status_code != 200:
-                logger.error(f"Telegram error {resp.status_code}: {resp.text[:300]}")
-                return False
-            logger.info(f"Telegram OK · lead={lead.id} phone={lead.phone}")
-            # Mark this lead as delivered so background retry doesn't re-send.
-            try:
-                await db.leads.update_one({"id": lead.id}, {"$set": {"telegram_sent": True}})
-            except Exception:
-                pass
-            return True
+            for cid in chat_ids:
+                try:
+                    resp = await http.post(url, json={
+                        "chat_id": cid,
+                        "text": text,
+                        "parse_mode": "HTML",
+                        "disable_web_page_preview": True,
+                    })
+                    if resp.status_code == 200:
+                        any_ok = True
+                        logger.info(f"Telegram OK · lead={lead.id} chat={cid}")
+                    else:
+                        logger.error(f"Telegram error {resp.status_code} chat={cid}: {resp.text[:200]}")
+                        # 403 = bot kicked / blocked → drop the recipient so we don't keep failing.
+                        if resp.status_code == 403:
+                            try:
+                                await db.tg_recipients.delete_one({"chat_id": str(cid)})
+                            except Exception:
+                                pass
+                except Exception as e:
+                    logger.exception(f"Telegram send to {cid} failed: {e}")
     except Exception as e:
-        logger.exception(f"Telegram send failed: {e}")
+        logger.exception(f"Telegram broadcast failed: {e}")
         return False
+
+    if any_ok:
+        try:
+            await db.leads.update_one({"id": lead.id}, {"$set": {"telegram_sent": True}})
+        except Exception:
+            pass
+    return any_ok
 
 
 @api_router.get("/")
@@ -308,8 +328,11 @@ async def create_lead(payload: LeadCreate, background: BackgroundTasks):
 
 
 async def send_telegram_photo(lead: Lead, file_bytes: bytes, filename: str) -> bool:
-    """Send the lead's car photo to Telegram with the full lead info as caption."""
-    if not TG_TOKEN or not TG_CHAT_ID:
+    """Send the lead's car photo to all recipients with the full lead info as caption."""
+    if not TG_TOKEN:
+        return False
+    chat_ids = await get_recipients(db)
+    if not chat_ids:
         return False
     caption = _format_lead_message(lead)
     # Telegram caption hard limit is 1024 chars; we truncate gracefully.
@@ -320,25 +343,39 @@ async def send_telegram_photo(lead: Lead, file_bytes: bytes, filename: str) -> b
     client_kwargs = {"timeout": 30.0}
     if proxy:
         client_kwargs["proxy"] = proxy
+
+    any_ok = False
     try:
         async with httpx.AsyncClient(**client_kwargs) as http:
-            resp = await http.post(
-                url,
-                data={"chat_id": TG_CHAT_ID, "caption": caption, "parse_mode": "HTML"},
-                files={"photo": (filename, file_bytes)},
-            )
-            if resp.status_code != 200:
-                logger.error(f"Telegram photo error {resp.status_code}: {resp.text[:300]}")
-                return False
-            logger.info(f"Telegram photo OK · lead={lead.id} phone={lead.phone}")
-            try:
-                await db.leads.update_one({"id": lead.id}, {"$set": {"telegram_sent": True}})
-            except Exception:
-                pass
-            return True
+            for cid in chat_ids:
+                try:
+                    resp = await http.post(
+                        url,
+                        data={"chat_id": cid, "caption": caption, "parse_mode": "HTML"},
+                        files={"photo": (filename, file_bytes)},
+                    )
+                    if resp.status_code == 200:
+                        any_ok = True
+                        logger.info(f"Telegram photo OK · lead={lead.id} chat={cid}")
+                    else:
+                        logger.error(f"Telegram photo error {resp.status_code} chat={cid}: {resp.text[:200]}")
+                        if resp.status_code == 403:
+                            try:
+                                await db.tg_recipients.delete_one({"chat_id": str(cid)})
+                            except Exception:
+                                pass
+                except Exception as e:
+                    logger.exception(f"Telegram photo send to {cid} failed: {e}")
     except Exception as e:
-        logger.exception(f"Telegram photo send failed: {e}")
+        logger.exception(f"Telegram photo broadcast failed: {e}")
         return False
+
+    if any_ok:
+        try:
+            await db.leads.update_one({"id": lead.id}, {"$set": {"telegram_sent": True}})
+        except Exception:
+            pass
+    return any_ok
 
 
 @api_router.post("/leads/upload")
@@ -441,6 +478,19 @@ async def resend_pending_leads(limit: int = 200):
     return {"total_pending": len(pending), "sent": sent, "failed": failed}
 
 
+@api_router.get("/telegram/recipients")
+async def telegram_recipients_list():
+    """List all registered Telegram recipients (env owner + chats that pressed /start)."""
+    chat_ids = await get_recipients(db)
+    saved = await db.tg_recipients.find({}, {"_id": 0}).to_list(200)
+    return {
+        "count": len(chat_ids),
+        "chat_ids": chat_ids,
+        "saved": saved,
+        "env_owner": os.environ.get("TELEGRAM_CHAT_ID", ""),
+    }
+
+
 @api_router.post("/telegram/test")
 async def telegram_test():
     """Manual test endpoint to verify Telegram configuration."""
@@ -529,8 +579,21 @@ async def start_scheduler():
         replace_existing=True,
     )
 
+    # Long-poll Telegram getUpdates to learn about /start commands and
+    # bot-added-to-group events. Every 15 seconds is plenty.
+    scheduler.add_job(
+        lambda: poll_telegram_updates(db),
+        trigger="interval",
+        seconds=15,
+        id="telegram-poll",
+        name="Poll Telegram for /start & chat membership",
+        replace_existing=True,
+        max_instances=1,
+        coalesce=True,
+    )
+
     scheduler.start()
-    logger.info("Scheduler started — daily digest 00:00 MSK + auto-resend every 1 min")
+    logger.info("Scheduler started — digest 00:00 MSK + resend 1min + tg-poll 15s")
 
 
 @app.on_event("shutdown")
