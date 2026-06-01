@@ -92,13 +92,12 @@ export default function Hero() {
           >
             <h1
               data-testid="hero-h1"
-              className="font-display text-[34px] sm:text-[42px] md:text-[56px] lg:text-[68px] leading-[1.02] tracking-[-0.035em] mb-6"
+              className="font-display text-[34px] sm:text-[42px] md:text-[56px] lg:text-[68px] leading-[1.05] tracking-[-0.035em] mb-6 text-balance"
             >
-              Новый BMW за <span className="gold-text">12 млн</span>?
+              Новый BMW за <span className="gold-text whitespace-nowrap">12 млн</span>?
               <br />
-              <span className="text-white">Защитите ЛКП</span> от сколов
-              <br />
-              на 10+ лет
+              <span className="text-white">Защитите ЛКП</span> от сколов{" "}
+              <span className="whitespace-nowrap">на 10+ лет</span>
             </h1>
 
             <p
