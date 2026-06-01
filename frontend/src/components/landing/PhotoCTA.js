@@ -20,6 +20,7 @@ export default function PhotoCTA() {
   const [sent, setSent] = useState(false);
   const phoneRef = useRef(null);
   const fileRef = useRef(null);
+  const sectionRef = useRef(null);
 
   const moveCaretToEnd = () => {
     const el = phoneRef.current;
@@ -74,6 +75,11 @@ export default function PhotoCTA() {
       const res = await fetch(`${API}/leads/upload`, { method: "POST", body: fd });
       if (!res.ok) throw new Error("upload-failed");
       setSent(true);
+      // Scroll user back to the top of this section so they see the success
+      // state right next to the form heading, not below the fold.
+      requestAnimationFrame(() => {
+        sectionRef.current?.scrollIntoView({ behavior: "smooth", block: "start" });
+      });
     } catch {
       toast.error("Не удалось отправить. Попробуйте ещё раз.");
     } finally {
@@ -87,6 +93,7 @@ export default function PhotoCTA() {
 
   return (
     <section
+      ref={sectionRef}
       data-testid="photo-cta-section"
       className="bg-[#0d0d0d] py-20 md:py-28"
     >
@@ -99,9 +106,9 @@ export default function PhotoCTA() {
       >
         <div className="text-center mb-10 md:mb-14">
           <div className="eyebrow mb-5 mx-auto inline-block">Быстрый расчёт</div>
-          <h2 className="font-display text-[30px] md:text-[56px] leading-[1.04] tracking-[-0.03em] mb-5">
-            Отправьте фото автомобиля<br />
-            <span className="text-white">и получите расчёт за <span className="gold-text">15 минут</span></span>
+          <h2 className="font-display text-[26px] sm:text-[34px] md:text-[56px] leading-[1.1] md:leading-[1.04] tracking-[-0.03em] mb-5 text-balance max-w-3xl mx-auto">
+            Отправьте фото автомобиля и получите расчёт за{" "}
+            <span className="gold-text whitespace-nowrap">15 минут</span>
           </h2>
           <p className="text-[#9a9a9a] text-base max-w-xl mx-auto leading-relaxed">
             Мастер изучит снимок кузова и подготовит предварительную смету до очного осмотра.
