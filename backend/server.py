@@ -1,4 +1,4 @@
-from fastapi import FastAPI, APIRouter, HTTPException, BackgroundTasks
+from fastapi import FastAPI, APIRouter, HTTPException, BackgroundTasks, File, UploadFile, Form
 from dotenv import load_dotenv
 from starlette.middleware.cors import CORSMiddleware
 from motor.motor_asyncio import AsyncIOMotorClient
@@ -305,6 +305,100 @@ async def create_lead(payload: LeadCreate, background: BackgroundTasks):
     # Send Telegram notification in background — never blocks response
     background.add_task(send_telegram_notification, lead)
     return lead
+
+
+async def send_telegram_photo(lead: Lead, file_bytes: bytes, filename: str) -> bool:
+    """Send the lead's car photo to Telegram with the full lead info as caption."""
+    if not TG_TOKEN or not TG_CHAT_ID:
+        return False
+    caption = _format_lead_message(lead)
+    # Telegram caption hard limit is 1024 chars; we truncate gracefully.
+    if len(caption) > 1000:
+        caption = caption[:990] + "…"
+    url = f"https://api.telegram.org/bot{TG_TOKEN}/sendPhoto"
+    proxy = os.environ.get("TELEGRAM_PROXY", "").strip() or None
+    client_kwargs = {"timeout": 30.0}
+    if proxy:
+        client_kwargs["proxy"] = proxy
+    try:
+        async with httpx.AsyncClient(**client_kwargs) as http:
+            resp = await http.post(
+                url,
+                data={"chat_id": TG_CHAT_ID, "caption": caption, "parse_mode": "HTML"},
+                files={"photo": (filename, file_bytes)},
+            )
+            if resp.status_code != 200:
+                logger.error(f"Telegram photo error {resp.status_code}: {resp.text[:300]}")
+                return False
+            logger.info(f"Telegram photo OK · lead={lead.id} phone={lead.phone}")
+            try:
+                await db.leads.update_one({"id": lead.id}, {"$set": {"telegram_sent": True}})
+            except Exception:
+                pass
+            return True
+    except Exception as e:
+        logger.exception(f"Telegram photo send failed: {e}")
+        return False
+
+
+@api_router.post("/leads/upload")
+async def create_lead_with_photo(
+    background: BackgroundTasks,
+    phone: str = Form(...),
+    bmw_model: str = Form(...),
+    name: Optional[str] = Form(None),
+    note: Optional[str] = Form(None),
+    source: Optional[str] = Form("photo-form"),
+    extra: Optional[str] = Form(None),  # JSON-encoded extra dict from frontend
+    photo: Optional[UploadFile] = File(None),
+):
+    """Lead form with optional car photo. Photo is forwarded to Telegram inline."""
+    raw_digits = ''.join(ch for ch in (phone or '') if ch.isdigit())
+    if len(raw_digits) < 10:
+        raise HTTPException(status_code=400, detail="Phone is required")
+    if not bmw_model or len(bmw_model.strip()) < 1:
+        raise HTTPException(status_code=400, detail="BMW model is required")
+
+    parsed_extra: Dict[str, Any] = {}
+    if extra:
+        try:
+            import json
+            parsed_extra = json.loads(extra) or {}
+        except Exception:
+            parsed_extra = {"_raw_extra": extra}
+
+    # Read photo bytes (if any) and basic validation: max 8 MB, image MIME.
+    file_bytes: Optional[bytes] = None
+    filename = "photo.jpg"
+    if photo is not None and photo.filename:
+        content_type = (photo.content_type or "").lower()
+        if not content_type.startswith("image/"):
+            raise HTTPException(status_code=400, detail="Only image files are allowed")
+        file_bytes = await photo.read()
+        if len(file_bytes) > 8 * 1024 * 1024:
+            raise HTTPException(status_code=400, detail="Photo is too large (max 8 MB)")
+        filename = photo.filename or "photo.jpg"
+        parsed_extra["Фото"] = f"приложено ({filename}, {len(file_bytes)//1024} КБ)"
+
+    lead = Lead(
+        name=name,
+        phone=phone,
+        bmw_model=bmw_model,
+        source=source or "photo-form",
+        note=note,
+        extra=parsed_extra,
+    )
+    doc = lead.model_dump()
+    doc['created_at'] = doc['created_at'].isoformat()
+    await db.leads.insert_one(doc)
+    logger.info(f"Photo-lead saved: {lead.phone} | {lead.bmw_model} | photo={bool(file_bytes)}")
+
+    # Telegram delivery — sendPhoto if photo attached, else regular message.
+    if file_bytes:
+        background.add_task(send_telegram_photo, lead, file_bytes, filename)
+    else:
+        background.add_task(send_telegram_notification, lead)
+    return {"ok": True, "lead_id": lead.id}
 
 
 @api_router.get("/leads", response_model=List[Lead])

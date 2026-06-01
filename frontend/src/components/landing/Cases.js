@@ -3,16 +3,42 @@ import { motion, AnimatePresence } from "framer-motion";
 import { Dialog, DialogContent, DialogTitle, DialogDescription } from "@/components/ui/dialog";
 import { useLead } from "@/lib/leadContext";
 import { CASES } from "@/lib/data";
-import { ZoomIn } from "lucide-react";
+
+async function probeUrl(url) {
+  try {
+    const res = await fetch(url, { method: "HEAD" });
+    return res.ok;
+  } catch {
+    return false;
+  }
+}
 
 export default function Cases() {
   const [openIdx, setOpenIdx] = useState(null);
   const [activeImg, setActiveImg] = useState(0);
-  const [lightbox, setLightbox] = useState(false);
+  // Per-case array of image URLs that we verified actually exist in storage.
+  // We probe lazily when a case is opened so we don't HEAD 36 images on load.
+  const [availableImages, setAvailableImages] = useState([]);
   const { openLead } = useLead();
   const active = openIdx !== null ? CASES[openIdx] : null;
 
-  useEffect(() => { setActiveImg(0); setLightbox(false); }, [openIdx]);
+  useEffect(() => {
+    setActiveImg(0);
+    if (active) {
+      let cancelled = false;
+      (async () => {
+        const results = await Promise.all(active.gallery.map((u) => probeUrl(u)));
+        if (cancelled) return;
+        const good = active.gallery.filter((_, i) => results[i]);
+        // Fallback: if for any reason nothing returned 200 (e.g. HEAD blocked),
+        // keep the first photo so the modal isn't empty.
+        setAvailableImages(good.length > 0 ? good : [active.gallery[0]]);
+      })();
+      return () => { cancelled = true; };
+    } else {
+      setAvailableImages([]);
+    }
+  }, [openIdx, active]);
 
   return (
     <section
@@ -92,26 +118,33 @@ export default function Cases() {
                 <div className="bg-[#050505]">
                   <div className="block w-full relative">
                     <div className="aspect-[16/10] md:aspect-[16/11] max-h-[32vh] md:max-h-none overflow-hidden bg-[#151515]">
-                      <img src={active.gallery[activeImg]} alt={`${active.model} ${activeImg + 1}`} className="w-full h-full object-cover" />
+                      {availableImages[activeImg] && (
+                        <img src={availableImages[activeImg]} alt={`${active.model} ${activeImg + 1}`} className="w-full h-full object-cover" />
+                      )}
                     </div>
                     <div className="absolute bottom-4 left-4 text-[11px] uppercase tracking-[0.2em] text-white/80 font-mono">
-                      {String(activeImg + 1).padStart(2, "0")} / {String(active.gallery.length).padStart(2, "0")}
+                      {String(activeImg + 1).padStart(2, "0")} / {String(availableImages.length).padStart(2, "0")}
                     </div>
                   </div>
-                  <div className="grid grid-cols-5 gap-px bg-white/5">
-                    {active.gallery.map((g, i) => (
-                      <button
-                        key={i}
-                        onClick={() => setActiveImg(i)}
-                        data-testid={`case-thumb-${i}`}
-                        className={`aspect-[4/3] overflow-hidden bg-[#0d0d0d] transition-opacity ${
-                          activeImg === i ? "opacity-100 ring-1 ring-white" : "opacity-60 hover:opacity-100"
-                        }`}
-                      >
-                        <img src={g} alt={`thumb ${i + 1}`} className="w-full h-full object-cover" loading="lazy" />
-                      </button>
-                    ))}
-                  </div>
+                  {availableImages.length > 1 && (
+                    <div
+                      className="grid gap-px bg-white/5"
+                      style={{ gridTemplateColumns: `repeat(${availableImages.length}, minmax(0, 1fr))` }}
+                    >
+                      {availableImages.map((g, i) => (
+                        <button
+                          key={i}
+                          onClick={() => setActiveImg(i)}
+                          data-testid={`case-thumb-${i}`}
+                          className={`aspect-[4/3] overflow-hidden bg-[#0d0d0d] transition-opacity ${
+                            activeImg === i ? "opacity-100 ring-1 ring-white" : "opacity-60 hover:opacity-100"
+                          }`}
+                        >
+                          <img src={g} alt={`thumb ${i + 1}`} className="w-full h-full object-cover" loading="lazy" />
+                        </button>
+                      ))}
+                    </div>
+                  )}
                 </div>
 
                 {/* Details */}

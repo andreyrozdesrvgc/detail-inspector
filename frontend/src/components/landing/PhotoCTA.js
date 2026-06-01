@@ -1,56 +1,261 @@
-import { motion } from "framer-motion";
-import { BRAND, CDN_BASE } from "@/lib/data";
-import { useLead } from "@/lib/leadContext";
-import { Camera } from "lucide-react";
+import { useRef, useState } from "react";
+import { motion, AnimatePresence } from "framer-motion";
+import { Input } from "@/components/ui/input";
+import { BRAND } from "@/lib/data";
+import { Camera, Loader2, Check, X } from "lucide-react";
+import { formatPhone, isValidRuPhone } from "@/lib/phone";
+import { buildLeadExtra } from "@/lib/utm";
+import { toast } from "sonner";
+
+const API = `${process.env.REACT_APP_BACKEND_URL}/api`;
 
 export default function PhotoCTA() {
-  const { openLead } = useLead();
+  const [name, setName] = useState("");
+  const [phone, setPhone] = useState("+7 ");
+  const [model, setModel] = useState("");
+  const [photo, setPhoto] = useState(null);
+  const [photoPreview, setPhotoPreview] = useState(null);
+  const [errors, setErrors] = useState({});
+  const [loading, setLoading] = useState(false);
+  const [sent, setSent] = useState(false);
+  const phoneRef = useRef(null);
+  const fileRef = useRef(null);
+
+  const moveCaretToEnd = () => {
+    const el = phoneRef.current;
+    if (!el) return;
+    requestAnimationFrame(() => {
+      const len = el.value.length;
+      try { el.setSelectionRange(len, len); } catch { /* ignore */ }
+    });
+  };
+
+  const onPickPhoto = (e) => {
+    const f = e.target.files?.[0];
+    if (!f) return;
+    if (!f.type.startsWith("image/")) {
+      toast.error("Файл должен быть изображением");
+      return;
+    }
+    if (f.size > 8 * 1024 * 1024) {
+      toast.error("Фото слишком большое (макс 8 МБ)");
+      return;
+    }
+    setPhoto(f);
+    const reader = new FileReader();
+    reader.onload = () => setPhotoPreview(reader.result);
+    reader.readAsDataURL(f);
+  };
+
+  const removePhoto = () => {
+    setPhoto(null);
+    setPhotoPreview(null);
+    if (fileRef.current) fileRef.current.value = "";
+  };
+
+  const submit = async (e) => {
+    e.preventDefault();
+    const errs = {};
+    if (!isValidRuPhone(phone)) errs.phone = "Введите номер РФ: +7 и ещё 10 цифр";
+    if (!model || model.trim().length < 1) errs.model = "Укажите модель BMW";
+    setErrors(errs);
+    if (Object.keys(errs).length) return;
+
+    setLoading(true);
+    try {
+      const fd = new FormData();
+      fd.append("phone", phone);
+      fd.append("bmw_model", model);
+      if (name) fd.append("name", name);
+      fd.append("source", "photo-form");
+      fd.append("note", photo ? "Прислал фото авто" : "Без фото");
+      fd.append("extra", JSON.stringify(buildLeadExtra({ "Модель BMW": model })));
+      if (photo) fd.append("photo", photo);
+      const res = await fetch(`${API}/leads/upload`, { method: "POST", body: fd });
+      if (!res.ok) throw new Error("upload-failed");
+      setSent(true);
+    } catch {
+      toast.error("Не удалось отправить. Попробуйте ещё раз.");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const reset = () => {
+    setSent(false); setName(""); setPhone("+7 "); setModel(""); removePhoto();
+  };
+
   return (
     <section
       data-testid="photo-cta-section"
-      className="bg-[#0d0d0d] py-24 md:py-32 relative overflow-hidden"
+      className="bg-[#0d0d0d] py-20 md:py-28"
     >
-      <div className="absolute inset-0 opacity-30">
-        <img
-          src={`${CDN_BASE}/cases/pexels-3.jpg`}
-          alt="Процесс PPF"
-          loading="lazy"
-          className="w-full h-full object-cover grayscale"
-        />
-        <div className="absolute inset-0 bg-gradient-to-b from-[#0d0d0d] via-[#0d0d0d]/70 to-[#0d0d0d]" />
-      </div>
-
       <motion.div
         initial={{ opacity: 0, y: 20 }}
         whileInView={{ opacity: 1, y: 0 }}
         viewport={{ once: true }}
         transition={{ duration: 0.7, ease: [0.16, 1, 0.3, 1] }}
-        className="relative max-w-[1100px] mx-auto px-6 md:px-10 text-center"
+        className="max-w-[1100px] mx-auto px-6 md:px-10"
       >
-        <div className="eyebrow mb-6 mx-auto" style={{ display: "inline-block" }}>Быстрый расчёт</div>
-        <h2 className="font-display text-[34px] md:text-[64px] leading-[1.0] tracking-[-0.04em] mb-8">
-          Отправьте фото автомобиля<br />
-          <span className="text-white">и получите расчёт за <span className="gold-text">15 минут</span></span>
-        </h2>
-        <p className="text-[#9a9a9a] text-base md:text-lg max-w-xl mx-auto mb-10 leading-relaxed">
-          Мастер изучит снимки кузова и подготовит предварительную смету до очного осмотра.
-        </p>
-        <div className="flex flex-wrap justify-center gap-4">
-          <button
-            onClick={() => openLead({ source: "photo-cta", note: "Прислать фото" })}
-            data-testid="photo-cta-primary"
-            className="btn-primary px-8 py-4 uppercase tracking-[0.18em] text-xs font-medium inline-flex items-center gap-2"
-          >
-            <span className="inline-flex items-center gap-2"><Camera className="size-4" /> Отправить фото</span>
-          </button>
-          <a
-            href={`tel:${BRAND.phoneRaw}`}
-            data-testid="photo-cta-call"
-            className="btn-ghost px-8 py-4 uppercase tracking-[0.18em] text-xs font-medium"
-          >
-            <span>Заказать звонок</span>
-          </a>
+        <div className="text-center mb-10 md:mb-14">
+          <div className="eyebrow mb-5 mx-auto inline-block">Быстрый расчёт</div>
+          <h2 className="font-display text-[30px] md:text-[56px] leading-[1.04] tracking-[-0.03em] mb-5">
+            Отправьте фото автомобиля<br />
+            <span className="text-white">и получите расчёт за <span className="gold-text">15 минут</span></span>
+          </h2>
+          <p className="text-[#9a9a9a] text-base max-w-xl mx-auto leading-relaxed">
+            Мастер изучит снимок кузова и подготовит предварительную смету до очного осмотра.
+          </p>
         </div>
+
+        <AnimatePresence mode="wait">
+          {!sent ? (
+            <motion.form
+              key="form"
+              onSubmit={submit}
+              initial={{ opacity: 0, y: 16 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0 }}
+              transition={{ duration: 0.5 }}
+              noValidate
+              className="max-w-2xl mx-auto bg-[#0a0a0a] border border-white/10 p-6 md:p-10 rounded-sm grid grid-cols-1 md:grid-cols-2 gap-4"
+            >
+              <Input
+                data-testid="photo-name"
+                placeholder="Имя"
+                value={name}
+                onChange={(e) => setName(e.target.value)}
+                autoComplete="name"
+                className="bg-[#0d0d0d] border-white/10 text-white h-12 rounded-sm md:col-span-1"
+              />
+              <div className="md:col-span-1">
+                <Input
+                  ref={phoneRef}
+                  data-testid="photo-phone"
+                  placeholder="+7 (___) ___-__-__"
+                  value={phone}
+                  onChange={(e) => { setPhone(formatPhone(e.target.value)); moveCaretToEnd(); }}
+                  onFocus={() => { if (!phone) setPhone("+7 "); moveCaretToEnd(); }}
+                  onClick={moveCaretToEnd}
+                  onKeyUp={moveCaretToEnd}
+                  onKeyDown={(e) => {
+                    if ((e.key === "Backspace" || e.key === "Delete") && phone.replace(/\D/g, "").length <= 1) e.preventDefault();
+                    if (e.key === "Home" || e.key === "ArrowLeft" || e.key === "ArrowUp") { e.preventDefault(); moveCaretToEnd(); }
+                  }}
+                  type="tel"
+                  inputMode="tel"
+                  autoComplete="tel"
+                  spellCheck={false}
+                  aria-invalid={!!errors.phone}
+                  className={`bg-[#0d0d0d] text-white h-12 rounded-sm ${errors.phone ? "border-red-500/60" : "border-white/10"}`}
+                />
+                {errors.phone && <div className="text-red-400 text-[11px] mt-1.5">{errors.phone}</div>}
+              </div>
+
+              <div className="md:col-span-2">
+                <Input
+                  data-testid="photo-model"
+                  placeholder="Модель BMW (например, X5) *"
+                  value={model}
+                  onChange={(e) => setModel(e.target.value)}
+                  spellCheck={false}
+                  aria-invalid={!!errors.model}
+                  className={`bg-[#0d0d0d] text-white h-12 rounded-sm ${errors.model ? "border-red-500/60" : "border-white/10"}`}
+                />
+                {errors.model && <div className="text-red-400 text-[11px] mt-1.5">{errors.model}</div>}
+              </div>
+
+              {/* Photo upload area */}
+              <div className="md:col-span-2">
+                <input
+                  ref={fileRef}
+                  type="file"
+                  accept="image/*"
+                  capture="environment"
+                  onChange={onPickPhoto}
+                  className="hidden"
+                  data-testid="photo-file-input"
+                />
+                {!photoPreview ? (
+                  <button
+                    type="button"
+                    onClick={() => fileRef.current?.click()}
+                    data-testid="photo-pick-btn"
+                    className="w-full h-32 md:h-36 border border-dashed border-white/15 hover:border-white/40 bg-[#0d0d0d] rounded-sm flex flex-col items-center justify-center gap-2 transition-colors"
+                  >
+                    <Camera className="size-6 text-[var(--gold-3,#d4a85a)]" />
+                    <div className="text-sm text-white">Прикрепить фото авто</div>
+                    <div className="text-[11px] text-[#9a9a9a]">JPG / PNG / HEIC · до 8 МБ · по желанию</div>
+                  </button>
+                ) : (
+                  <div className="relative">
+                    <img src={photoPreview} alt="preview" className="w-full max-h-72 object-cover rounded-sm border border-white/10" />
+                    <button
+                      type="button"
+                      onClick={removePhoto}
+                      aria-label="Удалить фото"
+                      className="absolute top-2 right-2 size-9 rounded-full bg-black/80 border border-white/20 backdrop-blur flex items-center justify-center hover:bg-black"
+                    >
+                      <X className="size-4 text-white" />
+                    </button>
+                    <div className="mt-2 text-[11px] text-[#9a9a9a]">
+                      {photo?.name} · {photo ? Math.round(photo.size / 1024) : 0} КБ
+                    </div>
+                  </div>
+                )}
+              </div>
+
+              <div className="md:col-span-2 flex flex-col sm:flex-row gap-3 pt-2">
+                <button
+                  type="submit"
+                  disabled={loading}
+                  data-testid="photo-submit"
+                  className="btn-primary flex-1 h-12 uppercase tracking-[0.18em] text-xs font-medium disabled:opacity-50"
+                >
+                  <span className="inline-flex items-center justify-center gap-2">
+                    {loading ? <Loader2 className="size-4 animate-spin" /> : null}
+                    Отправить заявку
+                  </span>
+                </button>
+                <a
+                  href={`tel:${BRAND.phoneRaw}`}
+                  data-testid="photo-cta-call"
+                  className="btn-ghost flex-1 h-12 inline-flex items-center justify-center uppercase tracking-[0.18em] text-xs font-medium"
+                >
+                  <span>Заказать звонок</span>
+                </a>
+              </div>
+              <p className="md:col-span-2 text-[11px] text-[#9a9a9a]/70 text-center">
+                Нажимая кнопку, вы соглашаетесь с политикой конфиденциальности.
+              </p>
+            </motion.form>
+          ) : (
+            <motion.div
+              key="success"
+              initial={{ opacity: 0, scale: 0.96 }}
+              animate={{ opacity: 1, scale: 1 }}
+              transition={{ duration: 0.5 }}
+              data-testid="photo-success"
+              className="max-w-xl mx-auto bg-[#0a0a0a] border border-white/10 p-8 md:p-12 text-center rounded-sm"
+            >
+              <div className="mx-auto mb-5 w-14 h-14 rounded-full bg-white flex items-center justify-center">
+                <Check className="size-7 text-black" strokeWidth={2.5} />
+              </div>
+              <h3 className="font-display text-2xl md:text-3xl mb-3">
+                {name ? `${name}, заявка принята` : "Заявка принята"}
+              </h3>
+              <p className="text-[#9a9a9a] text-sm mb-7 leading-relaxed">
+                Мастер свяжется с вами в течение 15 минут{photo ? " и изучит фото" : ""}.
+              </p>
+              <button
+                onClick={reset}
+                className="btn-ghost px-7 py-3 uppercase tracking-[0.18em] text-[11px] font-medium"
+              >
+                <span>Отправить ещё одну</span>
+              </button>
+            </motion.div>
+          )}
+        </AnimatePresence>
       </motion.div>
     </section>
   );
