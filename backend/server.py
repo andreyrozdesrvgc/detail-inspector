@@ -99,30 +99,14 @@ class CalculateResponse(BaseModel):
 
 
 # =========================
-# Pricing engine (deterministic)
+# Pricing engine — fixed price floor by task.
+# Does NOT depend on BMW model or vehicle condition.
 # =========================
-MODEL_BASE = {
-    "X5 G05": 340000,
-    "X6 G06": 360000,
-    "X7 G07": 390000,
-    "5 Series G60": 320000,
-    "7 Series G70": 410000,
-    "M3 / M4": 380000,
-    "M5 G90": 420000,
-    "iX / i7": 400000,
-    "XM": 450000,
-    "Другая модель": 350000,
-}
-TASK_MULT = {
-    "Полная оклейка кузова": 1.00,
-    "Зоны риска": 0.45,
-    "Антигравий + антихром": 0.65,
-    "Смена цвета": 1.35,
-}
-CONDITION_ADJ = {
-    "Новый автомобиль": 0,
-    "Есть сколы": 18000,
-    "После другой студии": 35000,
+TASK_PRICE = {
+    "Полная оклейка кузова": 280000,
+    "Зоны риска": 80000,
+    "Антигравий + антихром": 300000,
+    "Смена цвета": 350000,
 }
 
 
@@ -331,10 +315,7 @@ async def get_status_checks():
 
 @api_router.post("/calculate", response_model=CalculateResponse)
 async def calculate_price(payload: CalculateRequest):
-    base = MODEL_BASE.get(payload.bmw_model, 350000)
-    mult = TASK_MULT.get(payload.task, 1.00)
-    adj = CONDITION_ADJ.get(payload.condition, 0)
-    price = int(round((base * mult + adj) / 1000) * 1000)
+    price = TASK_PRICE.get(payload.task, 280000)
     label = f"{payload.task} {payload.bmw_model} — от {price:,} ₽".replace(",", " ")
     return CalculateResponse(
         estimated_price=price,

@@ -9,37 +9,17 @@ import { toast } from "sonner";
 
 const stepLabels = ["Модель BMW", "Задача", "Состояние", "Контакты"];
 
-// Local pricing engine — deterministic mirror of the backend one.
-// Calculated client-side to bulletproof the UX against any network failure.
-const MODEL_BASE = {
-  "X5 G05": 340000,
-  "X6 G06": 360000,
-  "X7 G07": 390000,
-  "5 Series G60": 320000,
-  "7 Series G70": 410000,
-  "M3 / M4": 380000,
-  "M5 G90": 420000,
-  "iX / i7": 400000,
-  "XM": 450000,
-  "Другая модель": 350000,
-};
-const TASK_MULT = {
-  "Полная оклейка кузова": 1.0,
-  "Зоны риска": 0.45,
-  "Антигравий + антихром": 0.65,
-  "Смена цвета": 1.35,
-};
-const COND_ADJ = {
-  "Новый автомобиль": 0,
-  "Есть сколы": 18000,
-  "После другой студии": 35000,
+// Fixed price floor by task — does NOT depend on BMW model or condition.
+// Update this map if pricing changes.
+const TASK_PRICE = {
+  "Полная оклейка кузова": 280000,
+  "Зоны риска": 80000,
+  "Антигравий + антихром": 300000,
+  "Смена цвета": 350000,
 };
 
 function computePrice(model, task, condition) {
-  const base = MODEL_BASE[model] ?? 350000;
-  const mult = TASK_MULT[task] ?? 1.0;
-  const adj = COND_ADJ[condition] ?? 0;
-  return Math.round((base * mult + adj) / 1000) * 1000;
+  return TASK_PRICE[task] ?? 280000;
 }
 
 const fadeIn = {
