@@ -6,10 +6,10 @@ export const CDN_BASE = "https://storage.yandexcloud.net/detail-inspector";
 
 export const BRAND = {
   name: "Detail Inspector",
-  phone: "+7 (968) 500-01-21",
-  phoneRaw: "+79685000121",
+  phone: "+7 (967) 227-22-66",
+  phoneRaw: "+79672272266",
   telegram: "https://t.me/detail_inspector",
-  whatsapp: "https://wa.me/79685000121",
+  whatsapp: "https://wa.me/79672272266",
   address: "Москва, 1-й Дорожный проезд, 5А, 117545",
 };
 
