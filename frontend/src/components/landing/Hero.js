@@ -104,8 +104,8 @@ export default function Hero() {
               data-testid="hero-sub"
               className="text-white/70 text-base md:text-lg max-w-2xl leading-relaxed mb-10"
             >
-              Не конкурируем с оклейкой за 200 тыс. Используем плёнки премиум-класса
-              и выполняем работы мастерами с опытом 20+ лет.
+              Команда Detailing Inspector собрана из мастеров, работавших в премиальной студии FatTony. 
+              Мы сохранили высокие стандарты качества и внимания к деталям, сделав профессиональный детейлинг доступнее для владельцев автомобилей.
             </p>
 
             <div className="flex flex-wrap gap-4">
