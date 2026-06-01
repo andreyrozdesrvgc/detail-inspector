@@ -491,6 +491,49 @@ async def telegram_recipients_list():
     }
 
 
+class RecipientIn(BaseModel):
+    chat_id: str
+    title: Optional[str] = None
+
+
+@api_router.post("/telegram/recipients/add")
+async def telegram_recipient_add(payload: RecipientIn):
+    """Manually register a chat_id as a recipient (fallback if polling fails).
+
+    Tips:
+      • Private chat — your numeric user id (use @userinfobot to find it).
+      • Group / supergroup — usually a negative number like -100123456789.
+        Add the bot to the group first, then ask @username_to_id_bot or
+        @getidsbot for the chat id.
+    """
+    chat = {"id": payload.chat_id, "title": payload.title or "manual", "type": "manual"}
+    from telegram_recipients import upsert_recipient
+    await upsert_recipient(db, chat)
+    # Greet so they know it's wired up.
+    if TG_TOKEN:
+        url = f"https://api.telegram.org/bot{TG_TOKEN}/sendMessage"
+        proxy = os.environ.get("TELEGRAM_PROXY", "").strip() or None
+        kwargs = {"timeout": 10.0}
+        if proxy:
+            kwargs["proxy"] = proxy
+        try:
+            async with httpx.AsyncClient(**kwargs) as http:
+                await http.post(url, json={
+                    "chat_id": payload.chat_id,
+                    "text": "<b>✅ Detail Inspector Leads · готов к работе</b>\n\nЧат подключён вручную. Заявки будут приходить сюда.",
+                    "parse_mode": "HTML",
+                })
+        except Exception:
+            pass
+    return {"ok": True}
+
+
+@api_router.post("/telegram/recipients/remove")
+async def telegram_recipient_remove(payload: RecipientIn):
+    await db.tg_recipients.delete_one({"chat_id": str(payload.chat_id)})
+    return {"ok": True}
+
+
 @api_router.post("/telegram/test")
 async def telegram_test():
     """Manual test endpoint to verify Telegram configuration."""
