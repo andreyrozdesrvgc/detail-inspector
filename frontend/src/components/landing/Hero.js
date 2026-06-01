@@ -94,7 +94,7 @@ export default function Hero() {
               data-testid="hero-h1"
               className="font-display text-[34px] sm:text-[42px] md:text-[56px] lg:text-[68px] leading-[1.05] tracking-[-0.035em] mb-6 text-balance"
             >
-              Новый BMW за <span className="gold-text whitespace-nowrap">12 млн</span>?
+              Новый BMW за <span className="gold-text whitespace-nowrap">6 млн</span>?
               <br />
               <span className="text-white">Защитите ЛКП</span> от сколов{" "}
               <span className="whitespace-nowrap">на 10+ лет</span>
@@ -104,7 +104,7 @@ export default function Hero() {
               data-testid="hero-sub"
               className="text-white/70 text-base md:text-lg max-w-2xl leading-relaxed mb-10"
             >
-              Не конкурируем с оклейкой за 250 тыс. Используем плёнки премиум-класса
+              Не конкурируем с оклейкой за 200 тыс. Используем плёнки премиум-класса
               и выполняем работы мастерами с опытом 20+ лет.
             </p>
 
