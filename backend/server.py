@@ -192,20 +192,59 @@ def _format_lead_message(lead: Lead) -> str:
     return "\n".join(lines)
 
 
+async def _claim_lead_for_send(lead_id: str) -> bool:
+    """Atomically mark a lead as sent BEFORE attempting delivery.
+
+    Returns True only if this caller successfully claimed the lead.
+    Anyone else trying to (re)send the same lead will get False and bail.
+    If the actual Telegram send fails afterwards, the caller is responsible
+    for resetting the flag via `_release_lead_on_failure`.
+    """
+    try:
+        result = await db.leads.update_one(
+            {
+                "id": lead_id,
+                "$or": [
+                    {"telegram_sent": {"$ne": True}},
+                    {"telegram_sent": {"$exists": False}},
+                ],
+            },
+            {"$set": {"telegram_sent": True}},
+        )
+        return result.modified_count > 0
+    except Exception as e:
+        logger.exception(f"_claim_lead_for_send failed: {e}")
+        return False
+
+
+async def _release_lead_on_failure(lead_id: str) -> None:
+    try:
+        await db.leads.update_one({"id": lead_id}, {"$set": {"telegram_sent": False}})
+    except Exception:
+        pass
+
+
 async def send_telegram_notification(lead: Lead) -> bool:
     """Fire-and-forget Telegram notification.
 
     Broadcasts the lead to every recipient registered via /start or by
-    adding the bot to a group. Returns True if at least one delivery
-    succeeded (so we can mark `telegram_sent`).
+    adding the bot to a group. Uses an atomic Mongo claim to guarantee
+    each lead is sent exactly once, even if the auto-retry job races
+    with the primary send.
     """
     if not TG_TOKEN:
         logger.warning("Telegram disabled: TELEGRAM_BOT_TOKEN not set")
         return False
 
+    # Atomically claim the lead — if someone else is already sending it, bail.
+    if not await _claim_lead_for_send(lead.id):
+        logger.info(f"Telegram skip · lead={lead.id} already claimed")
+        return False
+
     chat_ids = await get_recipients(db)
     if not chat_ids:
         logger.warning("Telegram disabled: no recipients configured")
+        await _release_lead_on_failure(lead.id)
         return False
 
     text = _format_lead_message(lead)
@@ -241,13 +280,10 @@ async def send_telegram_notification(lead: Lead) -> bool:
                     logger.exception(f"Telegram send to {cid} failed: {e}")
     except Exception as e:
         logger.exception(f"Telegram broadcast failed: {e}")
-        return False
 
-    if any_ok:
-        try:
-            await db.leads.update_one({"id": lead.id}, {"$set": {"telegram_sent": True}})
-        except Exception:
-            pass
+    if not any_ok:
+        # Release the claim so the retry job can try again later.
+        await _release_lead_on_failure(lead.id)
     return any_ok
 
 
@@ -331,11 +367,16 @@ async def send_telegram_photo(lead: Lead, file_bytes: bytes, filename: str) -> b
     """Send the lead's car photo to all recipients with the full lead info as caption."""
     if not TG_TOKEN:
         return False
+    # Same atomic claim as text notifications — prevents duplicate sends from retry.
+    if not await _claim_lead_for_send(lead.id):
+        logger.info(f"Telegram photo skip · lead={lead.id} already claimed")
+        return False
+
     chat_ids = await get_recipients(db)
     if not chat_ids:
+        await _release_lead_on_failure(lead.id)
         return False
     caption = _format_lead_message(lead)
-    # Telegram caption hard limit is 1024 chars; we truncate gracefully.
     if len(caption) > 1000:
         caption = caption[:990] + "…"
     url = f"https://api.telegram.org/bot{TG_TOKEN}/sendPhoto"
@@ -368,13 +409,9 @@ async def send_telegram_photo(lead: Lead, file_bytes: bytes, filename: str) -> b
                     logger.exception(f"Telegram photo send to {cid} failed: {e}")
     except Exception as e:
         logger.exception(f"Telegram photo broadcast failed: {e}")
-        return False
 
-    if any_ok:
-        try:
-            await db.leads.update_one({"id": lead.id}, {"$set": {"telegram_sent": True}})
-        except Exception:
-            pass
+    if not any_ok:
+        await _release_lead_on_failure(lead.id)
     return any_ok
 
 
