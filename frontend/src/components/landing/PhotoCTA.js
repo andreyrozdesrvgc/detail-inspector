@@ -171,7 +171,6 @@ export default function PhotoCTA() {
                   ref={fileRef}
                   type="file"
                   accept="image/*"
-                  capture="environment"
                   onChange={onPickPhoto}
                   className="hidden"
                   data-testid="photo-file-input"
@@ -210,7 +209,7 @@ export default function PhotoCTA() {
                   type="submit"
                   disabled={loading}
                   data-testid="photo-submit"
-                  className="btn-primary flex-1 h-12 uppercase tracking-[0.18em] text-xs font-medium disabled:opacity-50"
+                  className="btn-primary w-full sm:flex-1 px-8 py-4 uppercase tracking-[0.18em] text-xs font-medium disabled:opacity-50"
                 >
                   <span className="inline-flex items-center justify-center gap-2">
                     {loading ? <Loader2 className="size-4 animate-spin" /> : null}
@@ -220,7 +219,7 @@ export default function PhotoCTA() {
                 <a
                   href={`tel:${BRAND.phoneRaw}`}
                   data-testid="photo-cta-call"
-                  className="btn-ghost flex-1 h-12 inline-flex items-center justify-center uppercase tracking-[0.18em] text-xs font-medium"
+                  className="btn-ghost w-full sm:flex-1 px-8 py-4 inline-flex items-center justify-center uppercase tracking-[0.18em] text-xs font-medium text-center"
                 >
                   <span>Заказать звонок</span>
                 </a>
